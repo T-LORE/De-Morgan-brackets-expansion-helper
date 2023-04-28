@@ -3,6 +3,10 @@
 
 #include <QString>
 #include <QList>
+
+/*!
+* \Перечисление логических операндов
+*/
 enum operandType {
     NOT,
     AND,
@@ -11,6 +15,9 @@ enum operandType {
     VARIABLE
 };
 
+/*!
+* \Структура узла логического дерева
+*/
 struct node {
     QString data;
     operandType type;
@@ -19,21 +26,24 @@ struct node {
 };
 
 
+/*!
+* \Перечисление исключений
+*/
 enum exeption{
     PATH_NOT_FOUND, // путь к файлу пустой
     FILE_NOT_FOUND, // файл по пути не найден
     FILE_NOT_OPENED, // нет доступа к файлу
     MORE_THAN_ONE_STRING, // в файле содержится слишком много строк
-    WRONG_SYMBOL, // неизвестный символ в строке
+    UNKNOWN_SYMBOL, // неизвестный символ в строке
     NOT_ENOUGH_OPERATORS, // недостаточно оператором
     NOT_ENOUGH_ARGUMENTS, // недостаточно аргументов
     NO_SPACE_BETWEEN_OPERANDS, // нет разделителя пробела между операндами
     EMPTY_TREE //пустое древо
-
-
-
 };
 
+/*!
+* \Структура ошибки
+*/
 struct error {
     exeption error;
     int position;
@@ -41,7 +51,7 @@ struct error {
 };
 
 struct errors {
-    QList<error> lsit;
+    QList<error> list;
 };
 
 /*!

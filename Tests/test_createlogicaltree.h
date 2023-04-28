@@ -5,11 +5,17 @@
 #include "qobject.h"
 #include "qtmetamacros.h"
 
+#include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
+
 class test_createLogicalTree : public QObject
 {
    Q_OBJECT
    public:
        explicit test_createLogicalTree(QObject *parent = 0);
+
+   public slots:
+    void compareErrors(errors expectedErrors, errors errors);
+    void compareTrees(node *expectedTree, node *tree);
 
    private slots:
     void initTestCase();
