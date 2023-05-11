@@ -4,13 +4,18 @@
 
 #include "qobject.h"
 #include "qtmetamacros.h"
+#include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
+
 class test_deleteDoubleNegation: public QObject
 {
    Q_OBJECT
    public:
        explicit test_deleteDoubleNegation(QObject *parent = 0);
 
-   private slots:
+public slots:
+    void compareTrees(node *expectedTree, node *tree);
+
+private slots:
     void initTestCase();
     void noTransformations();
     void oneNegation();
