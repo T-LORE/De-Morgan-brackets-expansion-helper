@@ -10,6 +10,9 @@ class test_deMorganTransform: public QObject
    public:
        explicit test_deMorganTransform(QObject *parent = 0);
 
+   public slots:
+        void compareTrees(node *expectedTree, node *tree);
+   
    private slots:
     void initTestCase();
     void conjunctionOfTwoVariables();
