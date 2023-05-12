@@ -3,7 +3,7 @@
 #include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
 
 
-void test_demorgantransform::compareTrees(node *expectedTree, node *tree)
+void test_deMorganTransform::compareTrees(node *expectedTree, node *tree)
 {
     if (expectedTree == NULL) {
         QVERIFY(tree == NULL);
@@ -412,7 +412,7 @@ void test_deMorganTransform::emptyTree()
         deMorganTransform(tree);
         QVERIFY(false);
     } catch (error &e) {
-        QVERIFY(e->error = EMPTY_TREE);
+        QVERIFY(e.error = EMPTY_TREE);
     }
     
 }
