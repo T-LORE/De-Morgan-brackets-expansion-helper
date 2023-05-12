@@ -4,6 +4,8 @@
 
 #include "qobject.h"
 #include "qtmetamacros.h"
+#include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
+
 class test_deMorganTransform: public QObject
 {
    Q_OBJECT

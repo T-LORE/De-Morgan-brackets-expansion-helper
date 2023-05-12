@@ -1,6 +1,5 @@
 #include "test_demorgantransform.h"
 #include <QtTest>
-#include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
 
 
 void test_deMorganTransform::compareTrees(node *expectedTree, node *tree)
