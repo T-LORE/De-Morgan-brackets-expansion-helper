@@ -69,7 +69,36 @@ QString getStringFromFile(QString path)
 
 }
 
-void saveStringToFile(QString path)
+void saveStringToFile(QString path, QString str)
 {
+    QList<error> errorList;
+
+    // Проверка наличия пути к файлу
+    if (path.isEmpty()) {
+        // Путь к файлу пустой
+        error pathError;
+        pathError.error = PATH_NOT_FOUND;
+        errorList.append(pathError);
+        throw errorList;
+    }
+
+    // Открытие файла
+    QFile file(path);
+
+    // Проверка доступа к файлу
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        // Нет доступа к файлу
+        error noAccessToFileError;
+        noAccessToFileError.error = NO_ACCESS_TO_FILE;
+        errorList.append(noAccessToFileError);
+        throw errorList;
+    }
+
+    // поток записи в файл
+    QTextStream out(&file); 
+    out << str; 
+
+    file.close();
+
 
 }

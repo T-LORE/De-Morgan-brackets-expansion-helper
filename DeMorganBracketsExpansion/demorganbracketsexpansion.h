@@ -38,7 +38,8 @@ enum exeption{
     NOT_ENOUGH_OPERATORS, // недостаточно оператором
     NOT_ENOUGH_ARGUMENTS, // недостаточно аргументов
     NO_SPACE_BETWEEN_OPERANDS, // нет разделителя пробела между операндами
-    EMPTY_TREE //пустое древо
+    EMPTY_TREE, //пустое древо
+    NO_ACCESS_TO_FILE // нет доступа к файлу
 };
 
 /*!
@@ -98,6 +99,6 @@ QString getStringFromFile(QString path);
 * \param[in] str - строка с логическим выражением
 * \throw - (Выбрасывает исключения в случае ошибок обработки файла)
 */
-void saveStringToFile(QString path);
+void saveStringToFile(QString path, QString str);
 
 #endif // DEMORGANBRACKETSEXPANSION_H
