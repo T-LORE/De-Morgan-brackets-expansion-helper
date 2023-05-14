@@ -8,11 +8,13 @@
 * \Перечисление логических операндов
 */
 enum operandType {
+    NULL_ELEMENT,
     NOT,
     AND,
     OR,
     XOR,
     VARIABLE
+  
 };
 
 /*!
