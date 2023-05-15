@@ -4,11 +4,14 @@
 
 #include "qobject.h"
 #include "qtmetamacros.h"
+
+#include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
+
 class test_treeToString: public QObject
 {
    Q_OBJECT
    public:
-       explicit test_treeToString(QObject *parent = 0);
+       void compareErrors(QList<error> expectedErrors, QList<error> errors);
 
    private slots:
     void initTestCase();
@@ -18,7 +21,7 @@ class test_treeToString: public QObject
     void twoNodesVarOper();
     void threeNodesVarVarOper();
     void fourNodesVarVarVarOperOper();
-    void invalidNode();
+    void emptyVariable();
     void complexTest1();
     void complexTest2();
     void cleanupTestCase();
