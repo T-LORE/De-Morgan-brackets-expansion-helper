@@ -41,7 +41,8 @@ enum exeption{
     NOT_ENOUGH_ARGUMENTS, // недостаточно аргументов
     NO_SPACE_BETWEEN_OPERANDS, // нет разделителя пробела между операндами
     EMPTY_TREE, //пустое древо
-    NO_ACCESS_TO_FILE // нет доступа к файлу
+    NO_ACCESS_TO_FILE, // нет доступа к файлу
+    INCORRECT_VARIABLE // некорректное имя переменной
 };
 
 /*!
