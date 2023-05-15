@@ -1,6 +1,5 @@
 #include "test_treetostring.h"
 #include <QtTest>
-#include "../DeMorganBracketsExpansion/demorganbracketsexpansion.h"
 
 void test_treeToString::compareErrors(QList<error> expectedErrors, QList<error> actualErrors)
 {
