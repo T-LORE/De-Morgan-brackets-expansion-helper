@@ -27,8 +27,7 @@ enum operandType {
 struct node {
     QString data;
     operandType type;
-    node *left;
-    node *right;
+    QList<node *> childrens;
 };
 
 
