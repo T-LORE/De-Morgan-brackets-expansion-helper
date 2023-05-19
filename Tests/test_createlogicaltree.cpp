@@ -8,13 +8,14 @@ test_createLogicalTree::test_createLogicalTree(QObject *parent) : QObject(parent
 {
 }
 
-void test_createLogicalTree::compareErrors(errors expectedErrors, errors errors)
+void test_createLogicalTree::compareErrors(QList<error> expectedErrors, QList<error> actualErrors)
 {
-    QVERIFY(expectedErrors.list.size() == errors.list.size());
-    for (int i = 0; i < expectedErrors.list.size(); i++) {
-        QVERIFY(expectedErrors.list[i].error == errors.list[i].error);
-        QVERIFY(expectedErrors.list[i].position == errors.list[i].position);
-        QVERIFY(expectedErrors.list[i].symbol == errors.list[i].symbol);
+    QCOMPARE(expectedErrors.size(), actualErrors.size());
+    for (int i = 0; i < expectedErrors.size(); i++)
+    {
+        QCOMPARE(expectedErrors[i].error, actualErrors[i].error);
+        QCOMPARE(expectedErrors[i].position, actualErrors[i].position);
+        QCOMPARE(expectedErrors[i].symbol, actualErrors[i].symbol);
     }
 }
 
@@ -60,14 +61,12 @@ void test_createLogicalTree::oneSymbolOperator()
                                    0,
                                    '!'
                                });
-    errors expectedError = {
-        expectedErrorsQList
-    };
+    
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
@@ -85,16 +84,11 @@ void test_createLogicalTree::oneSymbolOperand()
         0,
         'A'
     });
-    errors expectedError = {
-        expectedErrorsQList
-
-    };
-
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
@@ -143,14 +137,11 @@ void test_createLogicalTree::onlyVariables()
         4,
         'C'
     });
-    errors expectedError = {
-        expectedErrorsQList
-    };
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
@@ -175,15 +166,11 @@ void test_createLogicalTree::onlyOperators()
         2,
         '!'
     });
-    errors expectedError = {
-        expectedErrorsQList
-    };
-
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
@@ -203,14 +190,11 @@ void test_createLogicalTree::errorAtTheBeginning()
         0,
         '/'
     });
-    errors expectedError = {
-        expectedErrorsQList
-    };
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
@@ -230,14 +214,11 @@ void test_createLogicalTree::errorAtTheEnd()
         8,
         '/'
     });
-    errors expectedError = {
-        expectedErrorsQList
-    };
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
@@ -271,14 +252,11 @@ void test_createLogicalTree::differentErrors()
         13,
         'C'
     });
-    errors expectedError = {
-        expectedErrorsQList
-    };
 
     try {
         root = createLogicalTree(str);
-    } catch (errors e) {
-        compareErrors(expectedError, e);
+    } catch (QList<error> e) {
+        compareErrors(expectedErrorsQList, e);
         isThrowErrors = true;
     }
     QVERIFY(root == NULL);
