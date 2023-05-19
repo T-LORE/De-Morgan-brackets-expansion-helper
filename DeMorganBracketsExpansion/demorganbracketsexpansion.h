@@ -127,4 +127,11 @@ QString getStringFromFile(QString path);
 */
 void saveStringToFile(QString path, QString str);
 
+/*!
+* \Проверяет является ли лексема переменной
+* \param[in] lexeme - лексема
+* \return - true если является, иначе false
+*/
+bool isVariableCorrect(QString lexeme);
+
 #endif // DEMORGANBRACKETSEXPANSION_H

@@ -102,3 +102,26 @@ void saveStringToFile(QString path, QString str)
 
 
 }
+
+bool isVariableCorrect(QString lexeme)
+{
+    if (lexeme.isEmpty())
+    {
+        return false;
+    }
+
+    if (lexeme[0].isDigit())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < lexeme.length(); i++)
+    {
+        if (!lexeme[i].isDigit() && !lexeme[i].isLetter())
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
