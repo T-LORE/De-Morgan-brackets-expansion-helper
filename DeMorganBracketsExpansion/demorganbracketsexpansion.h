@@ -4,6 +4,7 @@
 #include <QString>
 #include <QList>
 
+
 /*!
 * \Перечисление логических операндов
 */
@@ -16,6 +17,7 @@ enum operandType {
     VARIABLE
   
 };
+
 
 /*!
 * \Структура узла логического дерева
@@ -45,6 +47,7 @@ enum exeption{
     INCORRECT_VARIABLE // некорректное имя переменной
 };
 
+
 /*!
 * \Структура ошибки
 */
@@ -54,9 +57,6 @@ struct error {
     char symbol;
 };
 
-struct errors {
-    QList<error> list;
-};
 
 /*!
 * \Преобразует строку с логическим выражением без скобок записанным в обратной польской записи в логическое дерево
@@ -88,6 +88,7 @@ void deleteDoubleNegation(node *root);
 */
 void treeToString(node *root, QString str);
 
+
 /*!
 * \ Получает логическое выражение из файла
 * \param[in] path - путь к файлу
@@ -95,6 +96,7 @@ void treeToString(node *root, QString str);
 * \throw - (Выбрасывает исключения в случае ошибок обработки файла)
 */
 QString getStringFromFile(QString path);
+
 
 /*!
 * \ Записывает логическое выражение в файл
