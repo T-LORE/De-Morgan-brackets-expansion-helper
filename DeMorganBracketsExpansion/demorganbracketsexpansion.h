@@ -14,6 +14,8 @@ enum operandType {
     AND,
     OR,
     XOR,
+    NAND,
+    NOR,
     VARIABLE
   
 };
