@@ -42,7 +42,7 @@ enum exeption{
     UNKNOWN_SYMBOL, // неизвестный символ в строке
     NOT_ENOUGH_OPERATORS, // недостаточно оператором
     NOT_ENOUGH_ARGUMENTS, // недостаточно аргументов
-    NO_SPACE_BETWEEN_OPERANDS, // нет разделителя пробела между операндами
+    TO_MANY_SPACES, // слишком много пробелов
     EMPTY_TREE, //пустое древо
     NO_ACCESS_TO_FILE, // нет доступа к файлу
     INCORRECT_VARIABLE // некорректное имя переменной
