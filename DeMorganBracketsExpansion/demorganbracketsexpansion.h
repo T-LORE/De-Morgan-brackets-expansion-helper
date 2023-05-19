@@ -55,7 +55,7 @@ enum exeption{
 struct error {
     exeption error;
     int position;
-    char symbol;
+    QString data;
 };
 
 /*!
