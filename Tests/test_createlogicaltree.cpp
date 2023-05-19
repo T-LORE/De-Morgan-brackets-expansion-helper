@@ -2,7 +2,8 @@
 #include "qtestcase.h"
 #include <QtTest>
 #include <QList>
-
+#include <QMap>
+#include <QString>
 
 test_createLogicalTree::test_createLogicalTree(QObject *parent) : QObject(parent)
 {
@@ -15,7 +16,7 @@ void test_createLogicalTree::compareErrors(QList<error> expectedErrors, QList<er
     {
         QCOMPARE(expectedErrors[i].error, actualErrors[i].error);
         QCOMPARE(expectedErrors[i].position, actualErrors[i].position);
-        QCOMPARE(expectedErrors[i].symbol, actualErrors[i].symbol);
+        QCOMPARE(expectedErrors[i].data, actualErrors[i].data);
     }
 }
 
@@ -32,8 +33,8 @@ void test_createLogicalTree::compareTrees(node *expectedTree, node *tree)
     QVERIFY(expectedTree->type == tree->type);
     QVERIFY(expectedTree->data == tree->data);
 
-    compareTrees(expectedTree->left, tree->left);
-    compareTrees(expectedTree->right, tree->right);
+    compareTrees(expectedTree->childrens[0], tree->childrens[0]);
+    compareTrees(expectedTree->childrens[1], tree->childrens[1]);
 
 
 }
@@ -56,11 +57,12 @@ void test_createLogicalTree::oneSymbolOperator()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
-                                   NOT_ENOUGH_ARGUMENTS,
-                                   0,
-                                   '!'
-                               });
+    error e = {
+        NOT_ENOUGH_ARGUMENTS,
+        0,
+        "!"
+    };
+    expectedErrorsQList.append(e);
     
 
     try {
@@ -79,11 +81,12 @@ void test_createLogicalTree::oneSymbolOperand()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
+    error e = {
         NOT_ENOUGH_OPERATORS,
         0,
-        'A'
-    });
+        "A"
+    };
+    expectedErrorsQList.append(e);
 
     try {
         root = createLogicalTree(str);
@@ -101,15 +104,15 @@ void test_createLogicalTree::manySymbols()
 
     node *expectedTree = new node;
     expectedTree->type = NOT;
-    expectedTree->left = new node;
-    expectedTree->left->type = OR;
-    expectedTree->left->left = new node;
-    expectedTree->left->left->type = VARIABLE;
-    expectedTree->left->left->data = "A";
-    expectedTree->left->right = new node;
-    expectedTree->left->right->type = VARIABLE;
-    expectedTree->left->right->data = "B";
-    expectedTree->right = NULL;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = OR;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->data = "A";
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->data = "B";
+    expectedTree->childrens[1] = NULL;
 
     node *root = NULL;
 
@@ -127,16 +130,18 @@ void test_createLogicalTree::onlyVariables()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
+    error e = {
+        NOT_ENOUGH_OPERATORS,
+        0,
+        "A"
+    };
+    expectedErrorsQList.append(e);
+    error e1 = {
         NOT_ENOUGH_OPERATORS,
         2,
-        'B'
-    });
-    expectedErrorsQList.append({
-        NOT_ENOUGH_OPERATORS,
-        4,
-        'C'
-    });
+        "C"
+    };
+    expectedErrorsQList.append(e1);
 
     try {
         root = createLogicalTree(str);
@@ -156,16 +161,18 @@ void test_createLogicalTree::onlyOperators()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
+    error e = {
         NOT_ENOUGH_ARGUMENTS,
         0,
-        '+'
-    });
-    expectedErrorsQList.append({
+        "+"
+    };
+    expectedErrorsQList.append(e);
+    error e1 = {
         NOT_ENOUGH_ARGUMENTS,
         2,
-        '!'
-    });
+        "!"
+    };
+    expectedErrorsQList.append(e1);
 
     try {
         root = createLogicalTree(str);
@@ -185,11 +192,12 @@ void test_createLogicalTree::errorAtTheBeginning()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
+    error e = {
         UNKNOWN_SYMBOL,
         0,
-        '/'
-    });
+        "/"
+    };
+    expectedErrorsQList.append(e);
 
     try {
         root = createLogicalTree(str);
@@ -209,11 +217,12 @@ void test_createLogicalTree::errorAtTheEnd()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
+    error e = {
         UNKNOWN_SYMBOL,
         8,
-        '/'
-    });
+        "/"
+    };
+    expectedErrorsQList.append(e);
 
     try {
         root = createLogicalTree(str);
@@ -232,26 +241,31 @@ void test_createLogicalTree::differentErrors()
     node *root = NULL;
     bool isThrowErrors = false;
     QList<error> expectedErrorsQList;
-    expectedErrorsQList.append({
+    error e = {
         NOT_ENOUGH_ARGUMENTS,
         2,
-        '+'
-    });
-    expectedErrorsQList.append({
+        "+"
+    };
+    expectedErrorsQList.append(e);
+    error e1 = {
         UNKNOWN_SYMBOL,
         3,
-        '<'
-    });
-    expectedErrorsQList.append({
+        "<"
+    };
+    expectedErrorsQList.append(e);
+
+    error e2 = {
         UNKNOWN_SYMBOL,
         11,
-        '/'
-    });
-    expectedErrorsQList.append({
+        "/"
+    };
+    expectedErrorsQList.append(e2);
+    error e3 = {
         NOT_ENOUGH_OPERATORS,
         13,
-        'C'
-    });
+        "C"
+    };
+    expectedErrorsQList.append(e3);
 
     try {
         root = createLogicalTree(str);
@@ -272,10 +286,10 @@ void test_createLogicalTree::negation()
     
     node *expectedTree = new node;
     expectedTree->type = NOT;
-    expectedTree->left = new node;
-    expectedTree->left->type = VARIABLE;
-    expectedTree->left->data = "A";
-    expectedTree->right = NULL;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->data = "A";
+    expectedTree->childrens[1] = NULL;
 
     createLogicalTree(str);
 
@@ -292,12 +306,12 @@ void test_createLogicalTree::disjunction()
 
     node *expectedTree = new node;
     expectedTree->type = OR;
-    expectedTree->left = new node;
-    expectedTree->left->type = VARIABLE;
-    expectedTree->left->data = "A";
-    expectedTree->right = new node;
-    expectedTree->right->type = VARIABLE;
-    expectedTree->right->data = "B";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->data = "A";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->data = "B";
 
     createLogicalTree(str);
 
@@ -314,12 +328,12 @@ void test_createLogicalTree::conjunction()
 
     node *expectedTree = new node;
     expectedTree->type = AND;
-    expectedTree->left = new node;
-    expectedTree->left->type = VARIABLE;
-    expectedTree->left->data = "A";
-    expectedTree->right = new node;
-    expectedTree->right->type = VARIABLE;
-    expectedTree->right->data = "B";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->data = "A";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->data = "B";
 
     createLogicalTree(str);
 
@@ -335,12 +349,12 @@ void test_createLogicalTree::exclusiveOr()
 
     node *expectedTree = new node;
     expectedTree->type = XOR;
-    expectedTree->left = new node;
-    expectedTree->left->type = VARIABLE;
-    expectedTree->left->data = "A";
-    expectedTree->right = new node;
-    expectedTree->right->type = VARIABLE;
-    expectedTree->right->data = "B";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->data = "A";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->data = "B";
 
     createLogicalTree(str);
 
@@ -357,15 +371,15 @@ void test_createLogicalTree::nand()
 
     node *expectedTree = new node;
     expectedTree->type = NOT;
-    expectedTree->left = new node;
-    expectedTree->left->type = AND;
-    expectedTree->left->left = new node;
-    expectedTree->left->left->type = VARIABLE;
-    expectedTree->left->left->data = "A";
-    expectedTree->left->right = new node;
-    expectedTree->left->right->type = VARIABLE;
-    expectedTree->left->right->data = "B";
-    expectedTree->right = NULL;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = AND;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->data = "A";
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->data = "B";
+    expectedTree->childrens[1] = NULL;
 
     createLogicalTree(str);
 
@@ -383,15 +397,15 @@ void test_createLogicalTree::nor()
 
     node *expectedTree = new node;
     expectedTree->type = NOT;
-    expectedTree->left = new node;
-    expectedTree->left->type = OR;
-    expectedTree->left->left = new node;
-    expectedTree->left->left->type = VARIABLE;
-    expectedTree->left->left->data = "A";
-    expectedTree->left->right = new node;
-    expectedTree->left->right->type = VARIABLE;
-    expectedTree->left->right->data = "B";
-    expectedTree->right = NULL;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = OR;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->data = "A";
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->data = "B";
+    expectedTree->childrens[1] = NULL;
 
     createLogicalTree(str);
 
@@ -410,24 +424,24 @@ void test_createLogicalTree::complexTest1()
 
     node *expectedTree = new node;
     expectedTree->type = XOR;
-    expectedTree->left = new node;
-    expectedTree->left->type = OR;
-    expectedTree->left->left = new node;
-    expectedTree->left->left->type = AND;
-    expectedTree->left->left->left = new node;
-    expectedTree->left->left->left->type = VARIABLE;
-    expectedTree->left->left->left->data = "C";
-    expectedTree->left->left->right = new node;
-    expectedTree->left->left->right->type = VARIABLE;
-    expectedTree->left->left->right->data = "B";
-    expectedTree->left->right = new node;
-    expectedTree->left->right->type = VARIABLE;
-    expectedTree->left->right->data = "A";
-    expectedTree->right = new node;
-    expectedTree->right->type = NOT;
-    expectedTree->right->left = new node;
-    expectedTree->right->left->type = VARIABLE;
-    expectedTree->right->left->data = "D";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = OR;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = AND;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "C";
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[1]->data = "B";
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->data = "A";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->data = "D";
 
     createLogicalTree(str);
 
@@ -444,29 +458,29 @@ void test_createLogicalTree::complexTest2()
 
     node *expectedTree = new node;
     expectedTree->type = XOR;
-    expectedTree->left = new node;
-    expectedTree->left->type = OR;
-    expectedTree->left->left = new node;
-    expectedTree->left->left->type = AND;
-    expectedTree->left->left->left = new node;
-    expectedTree->left->left->left->type = VARIABLE;
-    expectedTree->left->left->left->data = "D";
-    expectedTree->left->left->right = new node;
-    expectedTree->left->left->right->type = VARIABLE;
-    expectedTree->left->left->right->data = "C";
-    expectedTree->left->right = new node;
-    expectedTree->left->right->type = AND;
-    expectedTree->left->right->left = new node;
-    expectedTree->left->right->left->type = VARIABLE;
-    expectedTree->left->right->left->data = "B";
-    expectedTree->left->right->right = new node;
-    expectedTree->left->right->right->type = VARIABLE;
-    expectedTree->left->right->right->data = "A";
-    expectedTree->right = new node;
-    expectedTree->right->type = NOT;
-    expectedTree->right->left = new node;
-    expectedTree->right->left->type = VARIABLE;
-    expectedTree->right->left->data = "E";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = OR;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = AND;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "D";
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[1]->data = "C";
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->type = AND;
+    expectedTree->childrens[0]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->childrens[0]->data = "B";
+    expectedTree->childrens[0]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->childrens[1]->data = "A";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->data = "E";
 
     createLogicalTree(str);
 
@@ -482,31 +496,31 @@ void test_createLogicalTree::complexTest3()
 
     node *expectedTree = new node;
     expectedTree->type = XOR;
-    expectedTree->left = new node;
-    expectedTree->left->type = OR;
-    expectedTree->left->left = new node;
-    expectedTree->left->left->type = NOT;
-    expectedTree->left->left->left = new node;
-    expectedTree->left->left->left->type = OR;
-    expectedTree->left->left->left->left = new node;
-    expectedTree->left->left->left->left->type = VARIABLE;
-    expectedTree->left->left->left->left->data = "B";
-    expectedTree->left->left->left->right = new node;
-    expectedTree->left->left->left->right->type = VARIABLE;
-    expectedTree->left->left->left->right->data = "A";
-    expectedTree->left->right = new node;
-    expectedTree->left->right->type = OR;
-    expectedTree->left->right->left = new node;
-    expectedTree->left->right->left->type = VARIABLE;
-    expectedTree->left->right->left->data = "D";
-    expectedTree->left->right->right = new node;
-    expectedTree->left->right->right->type = VARIABLE;
-    expectedTree->left->right->right->data = "C";
-    expectedTree->right = new node;
-    expectedTree->right->type = NOT;
-    expectedTree->right->left = new node;
-    expectedTree->right->left->type = VARIABLE;
-    expectedTree->right->left->data = "F";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = OR;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = OR;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens[0]->data = "B";
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens[1]->data = "A";
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->type = OR;
+    expectedTree->childrens[0]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->childrens[0]->data = "D";
+    expectedTree->childrens[0]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[1]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[1]->childrens[1]->data = "C";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->data = "F";
 
     createLogicalTree(str);
 

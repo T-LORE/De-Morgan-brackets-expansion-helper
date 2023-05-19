@@ -8,7 +8,7 @@ void test_treeToString::compareErrors(QList<error> expectedErrors, QList<error> 
     {
         QCOMPARE(expectedErrors[i].error, actualErrors[i].error);
         QCOMPARE(expectedErrors[i].position, actualErrors[i].position);
-        QCOMPARE(expectedErrors[i].symbol, actualErrors[i].symbol);
+        QCOMPARE(expectedErrors[i].data, actualErrors[i].data);
     }
 }
 
@@ -33,8 +33,8 @@ void test_treeToString::oneNodeVar()
     node *tree = new node;
     tree->type = VARIABLE;
     tree->data = "A";
-    tree->left = 0;
-    tree->right = 0;
+    tree->childrens[0] = 0;
+    tree->childrens[1] = 0;
 
     QString str = "data To Delete";
     QString expectedStr = "A";
@@ -50,8 +50,8 @@ void test_treeToString::oneNodeOper()
 {
     node *tree = new node;
     tree->type = NOT;
-    tree->left = 0;
-    tree->right = 0;
+    tree->childrens[0] = 0;
+    tree->childrens[1] = 0;
 
     QString str = "data To Delete";
     QString expectedStr = "!";
@@ -67,11 +67,11 @@ void test_treeToString::twoNodesVarOper()
     // A !
     node *tree = new node;
     tree->type = NOT;
-    tree->left = new node;
-    tree->left->type = VARIABLE;
-    tree->left->data = "A";
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "A";
 
-    tree->right = 0;
+    tree->childrens[1] = 0;
 
     QString str = "data To Delete";
     QString expectedStr = "A !";
@@ -88,13 +88,13 @@ void test_treeToString::threeNodesVarVarOper()
     // B A +
     node *tree = new node;
     tree->type = OR;
-    tree->left = new node;
-    tree->left->type = VARIABLE;
-    tree->left->data = "B";
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "B";
 
-    tree->right = new node;
-    tree->right->type = VARIABLE;
-    tree->right->data = "A";
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->data = "A";
 
     QString str = "data To Delete";
     QString expectedStr = "B A +";
@@ -110,19 +110,19 @@ void test_treeToString::fourNodesVarVarVarOperOper()
     // A B * C *
     node *tree = new node;
     tree->type = AND;
-    tree->left = new node;
-    tree->left->type = VARIABLE;
-    tree->left->data = "C";
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "C";
 
-    tree->right = new node;
-    tree->right->type = AND;
-    tree->right->left = new node;
-    tree->right->left->type = VARIABLE;
-    tree->right->left->data = "B";
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = AND;
+    tree->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[1]->childrens[0]->data = "B";
 
-    tree->right->right = new node;
-    tree->right->right->type = VARIABLE;
-    tree->right->right->data = "A";
+    tree->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->childrens[1]->data = "A";
 
     QString str = "data To Delete";
     QString expectedStr = "A B * C *";
@@ -137,21 +137,22 @@ void test_treeToString::emptyVariable()
 {
     node *tree = new node;
     tree->type = AND;
-    tree->left = new node;
-    tree->left->type = VARIABLE;
-    tree->left->data = "";
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "";
 
-    tree->right = new node;
-    tree->right->type = VARIABLE;
-    tree->right->data = "A";
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->data = "A";
 
     QString str = "data To Delete";
 
     QList<error> expectedErrors;
+    
     error expectedError{
         INCORRECT_VARIABLE,
-        1,
-        1
+        0,
+        ""
     };
     expectedErrors.append(expectedError);
 
@@ -169,27 +170,27 @@ void test_treeToString::complexTest1()
     node *tree = new node;
     tree->type = XOR;
 
-    tree->left = new node;
-    tree->left->type = VARIABLE;
-    tree->left->data = "D";
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "D";
 
-    tree->right = new node;
-    tree->right->type = AND;
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = AND;
 
-    tree->right->left = new node;
-    tree->right->left->type = VARIABLE;
-    tree->right->left->data = "C";
+    tree->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[1]->childrens[0]->data = "C";
     
-    tree->right->right = new node;
-    tree->right->right->type = OR;
+    tree->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->type = OR;
 
-    tree->right->right->left = new node;
-    tree->right->right->left->type = VARIABLE;
-    tree->right->right->left->data = "B";
+    tree->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[1]->childrens[1]->childrens[0]->data = "B";
 
-    tree->right->right->right = new node;
-    tree->right->right->right->type = VARIABLE;
-    tree->right->right->right->data = "A";
+    tree->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->childrens[1]->childrens[1]->data = "A";
 
     QString str = "data To Delete";
     QString expectedStr = "A B + C * D -";
@@ -205,37 +206,37 @@ void test_treeToString::complexTest2()
     node *tree = new node;
     tree->type = NOT;
 
-    tree->left = new node;
-    tree->left->type = OR;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = OR;
 
-    tree->left->left = new node;
-    tree->left->left->type = VARIABLE;
-    tree->left->left->data = "E";
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->data = "E";
 
-    tree->left->right = new node;
-    tree->left->right->type = XOR;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->type = XOR;
 
-    tree->left->right->left = new node;
-    tree->left->right->left->type = VARIABLE;
-    tree->left->right->left->data = "D";
+    tree->childrens[0]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->childrens[0]->data = "D";
 
-    tree->left->right->right = new node;
-    tree->left->right->right->type = AND;
+    tree->childrens[0]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[1]->type = AND;
 
-    tree->left->right->right->left = new node;
-    tree->left->right->right->left->type = VARIABLE;
-    tree->left->right->right->left->data = "C";
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[0]->data = "C";
 
-    tree->left->right->right->right = new node;
-    tree->left->right->right->right->type = OR;
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->type = OR;
 
-    tree->left->right->right->right->left = new node;
-    tree->left->right->right->right->left->type = VARIABLE;
-    tree->left->right->right->right->left->data = "B";
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->childrens[0]->data = "B";
 
-    tree->left->right->right->right->right = new node;
-    tree->left->right->right->right->right->type = VARIABLE;
-    tree->left->right->right->right->right->data = "A";
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->childrens[1]->childrens[1]->childrens[1]->data = "A";
 
     QString str = "data To Delete";
     QString expectedStr = "A B + C * D - E + !";

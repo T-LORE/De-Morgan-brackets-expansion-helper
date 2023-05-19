@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QList>
-
+#include <QMap>
 
 /*!
 * \Перечисление логических операндов
