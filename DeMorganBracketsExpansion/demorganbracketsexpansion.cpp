@@ -106,21 +106,27 @@ void saveStringToFile(QString path, QString str)
 QList<error> variableValidation(QString lexeme)
 {
     QList<error> errorList;
-    if (lexeme.isEmpty())
-    {
+    if (lexeme == "")
+    {   
+        error emptyLexemeError = {EMPTY_LEXEME, 0, ""};
+        errorList.append(emptyLexemeError);
         return errorList;
     }
 
     if (lexeme[0].isDigit())
     {
-        return errorList;
+        error digitError = {VARIABLE_STARTS_WITH_DIGIT, 0, lexeme[0]};
+        errorList.append(digitError);
+        
     }
 
     for (int i = 0; i < lexeme.length(); i++)
     {
         if (!lexeme[i].isDigit() && !lexeme[i].isLetter())
         {
-            return errorList;
+            error incorrectSymbolError = {UNKNOWN_SYMBOL, i, lexeme[i]};
+            errorList.append(incorrectSymbolError);
+            
         }
     }
 
