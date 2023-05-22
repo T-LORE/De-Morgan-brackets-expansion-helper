@@ -14,7 +14,7 @@ void test_createLogicalTree::compareErrors(QList<error> expectedErrors, QList<er
     QCOMPARE(expectedErrors.size(), actualErrors.size());
     for (int i = 0; i < expectedErrors.size(); i++)
     {
-        QCOMPARE(expectedErrors[i].error, actualErrors[i].error);
+        QCOMPARE(expectedErrors[i].type, actualErrors[i].type);
         QCOMPARE(expectedErrors[i].position, actualErrors[i].position);
         QCOMPARE(expectedErrors[i].data, actualErrors[i].data);
     }

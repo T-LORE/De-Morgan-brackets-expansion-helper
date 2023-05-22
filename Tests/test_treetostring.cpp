@@ -6,7 +6,7 @@ void test_treeToString::compareErrors(QList<error> expectedErrors, QList<error> 
     QCOMPARE(expectedErrors.size(), actualErrors.size());
     for (int i = 0; i < expectedErrors.size(); i++)
     {
-        QCOMPARE(expectedErrors[i].error, actualErrors[i].error);
+        QCOMPARE(expectedErrors[i].type, actualErrors[i].type);
         QCOMPARE(expectedErrors[i].position, actualErrors[i].position);
         QCOMPARE(expectedErrors[i].data, actualErrors[i].data);
     }

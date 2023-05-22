@@ -35,6 +35,7 @@ struct node {
 * \Перечисление исключений
 */
 enum exeption{
+    NULL_EXEPTION, // нет ошибки
     PATH_NOT_FOUND, // путь к файлу пустой
     FILE_NOT_FOUND, // файл по пути не найден
     FILE_NOT_OPENED, // нет доступа к файлу
@@ -53,9 +54,30 @@ enum exeption{
 * \Структура ошибки
 */
 struct error {
-    exeption error;
+    exeption type;
     int position;
     QString data;
+
+    
+    // Конструктор по умолчанию
+    error(){
+        this->type = NULL_EXEPTION;
+        this->position = 0;
+        this->data = "";
+    }
+    
+    // Конструктор с параметрами
+    error(exeption error, int position, QString data){
+        this->type = error;
+        this->position = position;
+        this->data = data;
+    }
+
+    // Перегрузка оператора сравнения
+    bool operator==(const error &other) const
+    {
+        return (type == other.type && position == other.position && data == other.data);
+    }
 };
 
 /*!

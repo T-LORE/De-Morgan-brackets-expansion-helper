@@ -411,7 +411,7 @@ void test_deMorganTransform::emptyTree()
         deMorganTransform(tree);
         QVERIFY(false);
     } catch (error &e) {
-        QVERIFY(e.error = EMPTY_TREE);
+        QVERIFY(e.type = EMPTY_TREE);
     }
     
 }
