@@ -40,13 +40,14 @@ enum exeption{
     FILE_NOT_FOUND, // файл по пути не найден
     FILE_NOT_OPENED, // нет доступа к файлу
     MORE_THAN_ONE_STRING, // в файле содержится слишком много строк
-    UNKNOWN_SYMBOL, // неизвестный символ в строке
+    UNKNOWN_SYMBOL, // неизвестный символ в названии переменной
     NOT_ENOUGH_OPERATORS, // недостаточно оператором
     NOT_ENOUGH_ARGUMENTS, // недостаточно аргументов
     TO_MANY_SPACES, // слишком много пробелов
     EMPTY_TREE, //пустое древо
     NO_ACCESS_TO_FILE, // нет доступа к файлу
-    INCORRECT_VARIABLE // некорректное имя переменной
+    VARIABLE_STARTS_WITH_DIGIT, // переменная начинается с цифры
+    EMPTY_LEXEME // пустая лексема
 };
 
 
@@ -152,8 +153,8 @@ void saveStringToFile(QString path, QString str);
 /*!
 * \Проверяет является ли лексема переменной
 * \param[in] lexeme - лексема
-* \return - true если является, иначе false
+* \return QList<error> - список ошибок написания переменной (если ошибок нет, то лексема соответствует правилу написания переменной)
 */
-bool isVariableCorrect(QString lexeme);
+QList<error> variableValidation(QString lexeme);
 
 #endif // DEMORGANBRACKETSEXPANSION_H

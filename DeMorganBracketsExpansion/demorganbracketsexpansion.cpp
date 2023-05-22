@@ -103,25 +103,26 @@ void saveStringToFile(QString path, QString str)
 
 }
 
-bool isVariableCorrect(QString lexeme)
+QList<error> variableValidation(QString lexeme)
 {
+    QList<error> errorList;
     if (lexeme.isEmpty())
     {
-        return false;
+        return errorList;
     }
 
     if (lexeme[0].isDigit())
     {
-        return false;
+        return errorList;
     }
 
     for (int i = 0; i < lexeme.length(); i++)
     {
         if (!lexeme[i].isDigit() && !lexeme[i].isLetter())
         {
-            return false;
+            return errorList;
         }
     }
 
-    return true;
+    return errorList;
 }

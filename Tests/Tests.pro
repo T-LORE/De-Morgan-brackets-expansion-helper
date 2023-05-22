@@ -15,6 +15,7 @@ SOURCES += \
         test_deletedoublenegation.cpp \
         test_demorgantransform.cpp \
         test_treetostring.cpp \
+        test_variablevalidation.cpp \
 
 
 #include(..\DeMorganBracketsExpansion\DeMorganBracketsExpansion.pri)
@@ -30,4 +31,5 @@ HEADERS += \
     test_deletedoublenegation.h \
     test_demorgantransform.h \
     test_treetostring.h \
+    test_variablevalidation.h \
 
