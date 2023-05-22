@@ -149,11 +149,7 @@ void test_treeToString::emptyVariable()
 
     QList<error> expectedErrors;
     
-    error expectedError{
-        INCORRECT_VARIABLE,
-        0,
-        ""
-    };
+    error expectedError = {UNKNOWN_SYMBOL, 0, ""};
     expectedErrors.append(expectedError);
 
     try {

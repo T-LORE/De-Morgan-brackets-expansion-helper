@@ -32,7 +32,7 @@ QString getStringFromFile(QString path)
     if (path.isEmpty()) {
         // Путь к файлу пустой
         error pathError;
-        pathError.error = PATH_NOT_FOUND;
+        pathError.type = PATH_NOT_FOUND;
         errorList.append(pathError);
         throw errorList;
     }
@@ -41,7 +41,7 @@ QString getStringFromFile(QString path)
     if (!file.exists()) {
         // Файл по пути не найден
         error fileError;
-        fileError.error = FILE_NOT_FOUND;
+        fileError.type = FILE_NOT_FOUND;
         errorList.append(fileError);
         throw errorList;
     }
@@ -49,7 +49,7 @@ QString getStringFromFile(QString path)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         // Нет доступа к файлу
         error fileError;
-        fileError.error = FILE_NOT_OPENED;
+        fileError.type = FILE_NOT_OPENED;
         errorList.append(fileError);
         throw errorList;
     }
@@ -60,7 +60,7 @@ QString getStringFromFile(QString path)
     if (!line.isNull() && !in.atEnd()) {
         // В файле содержится больше одной строки
         error multipleStringsError;
-        multipleStringsError.error = MORE_THAN_ONE_STRING;
+        multipleStringsError.type = MORE_THAN_ONE_STRING;
         errorList.append(multipleStringsError);
         throw errorList;
     }
@@ -77,7 +77,7 @@ void saveStringToFile(QString path, QString str)
     if (path.isEmpty()) {
         // Путь к файлу пустой
         error pathError;
-        pathError.error = PATH_NOT_FOUND;
+        pathError.type = PATH_NOT_FOUND;
         errorList.append(pathError);
         throw errorList;
     }
@@ -89,7 +89,7 @@ void saveStringToFile(QString path, QString str)
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         // Нет доступа к файлу
         error noAccessToFileError;
-        noAccessToFileError.error = NO_ACCESS_TO_FILE;
+        noAccessToFileError.type = NO_ACCESS_TO_FILE;
         errorList.append(noAccessToFileError);
         throw errorList;
     }
