@@ -11,9 +11,8 @@ class test_createLogicalTree : public QObject
 {
    Q_OBJECT
    public:
-       explicit test_createLogicalTree(QObject *parent = 0);
-
-   public slots:
+    explicit test_createLogicalTree(QObject *parent = 0);
+    void compareNodes(const node *expectedNode, const node *actualNode);
     void compareErrors(QList<error> expectedErrors, QList<error> actualErrors);
     void compareTrees(node *expectedTree, node *tree);
 
