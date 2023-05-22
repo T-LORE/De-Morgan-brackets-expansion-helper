@@ -6,7 +6,107 @@
 
 node *createLogicalTree(QString expression)
 {
-    return 0;
+    // Если строка состоит только из белых разделителей выдать ошибку
+    if (expression.trimmed().isEmpty())
+    {
+        QList<error> emptyTree;
+        emptyTree.append({EMPTY_TREE, 0, ""});
+        throw emptyTree;
+    }
+    QList<stackElement> stack;
+    QList<error> errorList;
+
+    const QStringList lexemes = expression.split(' ');
+
+    QList<QString>::const_iterator lexemeIterator = lexemes.begin();
+    int currentLexemePosition = 0;
+
+    for (QString currentLexeme : lexemes)
+    {
+        switch (lexemeClassification(currentLexeme))
+        {
+        case EMPTY:{
+            // Текущая лексема - пустая
+            errorList.append({TO_MANY_SPACES, currentLexemePosition, currentLexeme}); // Лишний разделитель (пробел)
+            break;
+            }
+
+        case OPERATOR:{
+            // Текущая лексема - оператор
+            node *operatorNode = new node();
+            operatorNode->type = operatorsMap[currentLexeme].type;
+            operatorNode->data = currentLexeme;
+
+            if (stack.size() < operatorsMap[currentLexeme].amountOfOperands)
+            {
+                // Не хватает операндов в стеке для того чтобы заполнить оператор
+                errorList.append({NOT_ENOUGH_ARGUMENTS, currentLexemePosition, currentLexeme});
+            }
+            else
+            {
+                // Добавить детей в новый узел
+                for (int i = 0; i < operatorsMap[currentLexeme].amountOfOperands; i++)
+                {
+                    operatorNode->childrens.append(stack.takeLast().element);
+                }
+            }
+
+            // Добавить новый узел в стек
+            stack.append({operatorNode, currentLexemePosition});
+            break;
+            }
+
+        case VAR:{
+            // Текущая лексема - переменная
+            node *variableNode = new node();
+            variableNode->type = VARIABLE;
+            variableNode->data = currentLexeme;
+
+            // Добавить новый узел в стек
+            stack.append({variableNode, currentLexemePosition});
+            break;
+            }
+
+        case UNKNOWN_LEXEME:{
+            // Ошибки в написании переменной
+            // Добавить ошибки в общий список
+            for (error exeption : variableValidation(currentLexeme))
+            {
+                exeption.position += currentLexemePosition; // Добавить позицию лексемы в строке
+                errorList.append(exeption);
+            }
+            break;
+            }
+        }
+
+        // Позиция считается как сумма длин всех предыдущих лексем + кол-во разделителей
+        currentLexemePosition += currentLexeme.length() + 1;
+    }
+
+    if (stack.size() > 1)
+    {
+        // После обработки выражения в стеке остались необработанные операторы (древо не сходится к единому корню)
+        while (stack.size() > 0)
+        {
+            stackElement stackNode = stack.takeLast();
+            errorList.append({NOT_ENOUGH_OPERATORS, stackNode.position, stackNode.element->data});
+        }
+    }
+
+    if (stack.size() == 0)
+    {
+        // Пустое дерево
+        errorList.append({EMPTY_TREE, 0, ""});
+    }
+
+    // Если во время обработки выражения возникли ошибки, то выбросить их
+    if (errorList.size() > 0)
+    {
+        throw errorList;
+    }
+
+    // Вернуть корень дерева
+    return stack.takeLast().element;
 }
 
 void deMorganTransform(node *root)
@@ -131,4 +231,24 @@ QList<error> variableValidation(QString lexeme)
     }
 
     return errorList;
+}
+
+lexemeType lexemeClassification(QString lexeme)
+{
+    if (lexeme == "")
+    {
+        return EMPTY;
+    }
+    if (operatorsMap.contains(lexeme))
+    {
+        return OPERATOR;
+    }
+    if (variableValidation(lexeme).isEmpty())
+    {
+        return VAR;
+    }
+    else
+    {
+        return UNKNOWN_LEXEME;
+    }
 }

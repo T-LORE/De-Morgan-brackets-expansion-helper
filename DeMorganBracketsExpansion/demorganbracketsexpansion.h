@@ -50,6 +50,16 @@ enum exeption{
     EMPTY_LEXEME // пустая лексема
 };
 
+/*!
+* \Перечисление типов лексем
+*/
+enum lexemeType
+{
+    EMPTY,
+    OPERATOR,
+    VAR,
+    UNKNOWN_LEXEME
+};
 
 /*!
 * \Структура ошибки
@@ -79,6 +89,15 @@ struct error {
     {
         return (type == other.type && position == other.position && data == other.data);
     }
+};
+
+/*!
+* \Структура элемента стека при создании логического дерева
+*/
+struct stackElement
+{
+    node *element;
+    int position;
 };
 
 /*!
@@ -156,5 +175,12 @@ void saveStringToFile(QString path, QString str);
 * \return QList<error> - список ошибок написания переменной (если ошибок нет, то лексема соответствует правилу написания переменной)
 */
 QList<error> variableValidation(QString lexeme);
+
+/*!
+* \Проверяет является ли лексема оператором
+* \param[in] lexeme - лексема
+* \return тип лексемы из перечисления lexemeType
+*/
+lexemeType lexemeClassification(QString lexeme);
 
 #endif // DEMORGANBRACKETSEXPANSION_H
