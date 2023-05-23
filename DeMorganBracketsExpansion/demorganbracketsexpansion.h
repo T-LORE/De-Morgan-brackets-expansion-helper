@@ -183,4 +183,11 @@ QList<error> variableValidation(QString lexeme);
 */
 lexemeType lexemeClassification(QString lexeme);
 
+/*!
+* \Получает строковую интерпретацию оператора
+* \param[in] type - тип оператора
+* \return строковая интерпретация оператора
+*/
+QString getIntrpretationOfOperator(operandType type);
+
 #endif // DEMORGANBRACKETSEXPANSION_H

@@ -252,3 +252,14 @@ lexemeType lexemeClassification(QString lexeme)
         return UNKNOWN_LEXEME;
     }
 }
+
+QString getIntrpretationOfOperator(operandType type){
+    if (type == VARIABLE){
+        return "VARIABLE";
+    }
+    for (auto iterator=operatorsMap.begin(); iterator!=operatorsMap.end(); iterator++) {
+        if (iterator.value().type == type) {
+            return iterator.key();
+        }
+    }
+}
