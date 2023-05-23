@@ -14,9 +14,9 @@ void test_createLogicalTree::compareErrors(QList<error> expectedErrors, QList<er
     QCOMPARE(actualErrors.size(), expectedErrors.size());
     for (int i = 0; i < expectedErrors.size(); i++)
     {
-        QCOMPARE(expectedErrors[i].type, actualErrors[i].type);
-        QCOMPARE(expectedErrors[i].position, actualErrors[i].position);
-        QCOMPARE(expectedErrors[i].data, actualErrors[i].data);
+        QCOMPARE(actualErrors[i].type, expectedErrors[i].type);
+        QCOMPARE(actualErrors[i].position, expectedErrors[i].position);
+        QCOMPARE(actualErrors[i].data, expectedErrors[i].data);
     }
 }
 void test_createLogicalTree::compareNodes(const node *expectedNode, const node *actualNode) {
@@ -270,7 +270,7 @@ void test_createLogicalTree::errorAtTheEnd()
 
 void test_createLogicalTree::differentErrors()
 {
-    QString str = "A +< B + ! / С";
+    QString str = "A +< B + ! / C";
     node *root = NULL;
     QList<error> expectedErrorsQList;
 
@@ -287,7 +287,7 @@ void test_createLogicalTree::differentErrors()
     });
 
     expectedErrorsQList.append({
-        NOT_ENOUGH_OPERATORS,
+        UNKNOWN_SYMBOL,
         11,
         "/"
     });
@@ -445,7 +445,7 @@ void test_createLogicalTree::nor()
     node *root = NULL;
 
     node *expectedTree = new node;
-    expectedTree->type = NOT;
+    expectedTree->type = NOR;
     expectedTree->data = "+!";
 
     expectedTree->childrens.append(new node);
@@ -556,7 +556,7 @@ void test_createLogicalTree::complexTest2()
 
 void test_createLogicalTree::complexTest3()
 {
-    QString str = "A B + ! C D + - F ! -";
+    QString str = "C D + A B + ! + F ! -";
     node *root = NULL;
 
     node *expectedTree = new node;
@@ -572,6 +572,7 @@ void test_createLogicalTree::complexTest3()
     expectedTree->childrens.append(new node);
     expectedTree->childrens[1]->type = OR;
     expectedTree->childrens[1]->data = "+";
+
     expectedTree->childrens[1]->childrens.append(new node);
     expectedTree->childrens[1]->childrens[0]->type = NOT;
     expectedTree->childrens[1]->childrens[0]->data = "!";
