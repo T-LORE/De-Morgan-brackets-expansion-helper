@@ -33,8 +33,6 @@ void test_treeToString::oneNodeVar()
     node *tree = new node;
     tree->type = VARIABLE;
     tree->data = "A";
-    tree->childrens[0] = 0;
-    tree->childrens[1] = 0;
 
     QString str = "data To Delete";
     QString expectedStr = "A";
@@ -50,8 +48,7 @@ void test_treeToString::oneNodeOper()
 {
     node *tree = new node;
     tree->type = NOT;
-    tree->childrens[0] = 0;
-    tree->childrens[1] = 0;
+
 
     QString str = "data To Delete";
     QString expectedStr = "!";
@@ -71,7 +68,7 @@ void test_treeToString::twoNodesVarOper()
     tree->childrens[0]->type = VARIABLE;
     tree->childrens[0]->data = "A";
 
-    tree->childrens[1] = 0;
+
 
     QString str = "data To Delete";
     QString expectedStr = "A !";
@@ -97,7 +94,7 @@ void test_treeToString::threeNodesVarVarOper()
     tree->childrens[1]->data = "A";
 
     QString str = "data To Delete";
-    QString expectedStr = "B A +";
+    QString expectedStr = "A B +";
 
     treeToString(tree, str);
 
@@ -149,7 +146,7 @@ void test_treeToString::emptyVariable()
 
     QList<error> expectedErrors;
     
-    error expectedError = {UNKNOWN_SYMBOL, 0, ""};
+    error expectedError = {EMPTY_LEXEME, 0, ""};
     expectedErrors.append(expectedError);
 
     try {
