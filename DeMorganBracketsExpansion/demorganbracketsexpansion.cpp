@@ -119,8 +119,58 @@ void deleteDoubleNegation(node *root)
 
 }
 
-void treeToString(node *root, QString str)
+void treeToString(node *root, QString &str)
 {
+    QList<error> errorList;
+    QList<node*> stack;
+    QList<QString> outputStack;
+
+    if (root == nullptr) {
+        str = "";
+        return;
+    }
+    
+    stack.append(root);
+    while (!stack.isEmpty()) {
+        node* current = stack.takeLast();
+        switch (current->type)
+        {
+        case VARIABLE:
+            if (variableValidation(current->data).isEmpty())
+                outputStack.append(current->data);
+            else {
+                for (error exeption : variableValidation(current->data))
+                {
+                    errorList.append(exeption);
+                }
+            }
+            break;
+        
+        case NULL_ELEMENT:
+            errorList.append({EMPTY_TREE, 0, ""});
+            break;
+        
+        default:
+            for (int i = current->childrens.size() - 1; i >= 0; --i) {
+                stack.append(current->childrens[i]);
+            }
+            outputStack.append(getIntrpretationOfOperator(current->type));
+            break;
+        }
+        
+    }
+
+    if (errorList.size() > 0)
+    {
+        throw errorList;
+    }
+   
+    str = "";
+    while (!outputStack.isEmpty()) {
+        str += outputStack.takeLast();
+        if (!outputStack.isEmpty())
+            str += " ";
+    } 
 
 }
 

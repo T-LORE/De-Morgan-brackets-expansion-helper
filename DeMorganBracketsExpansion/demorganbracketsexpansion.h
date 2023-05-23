@@ -149,7 +149,7 @@ void deleteDoubleNegation(node *root);
 * \param[in] root - указатель на корень дерева
 * \param[out] str - строка в которую необходимо записать результат
 */
-void treeToString(node *root, QString str);
+void treeToString(node *root, QString &str);
 
 
 /*!
