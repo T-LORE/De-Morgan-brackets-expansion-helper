@@ -83,21 +83,23 @@ node *createLogicalTree(QString expression)
         currentLexemePosition += currentLexeme.length() + 1;
     }
 
-    if (stack.size() > 1)
-    {
-        // После обработки выражения в стеке остались необработанные операторы (древо не сходится к единому корню)
-        while (stack.size() > 0)
-        {
-            stackElement stackNode = stack.takeLast();
-            errorList.append({NOT_ENOUGH_OPERATORS, stackNode.position, stackNode.element->data});
-        }
-    }
-
     if (stack.size() == 0)
     {
         // Пустое дерево
         errorList.append({EMPTY_TREE, 0, ""});
     }
+
+    if (stack.size() > 1)
+    {
+        // После обработки выражения в стеке остались необработанные операторы (древо не сходится к единому корню)
+        while (stack.size() > 0)
+        {
+            stackElement stackNode = stack.takeFirst();
+            errorList.append({NOT_ENOUGH_OPERATORS, stackNode.position, stackNode.element->data});
+        }
+    }
+
+
 
     // Если во время обработки выражения возникли ошибки, то выбросить их
     if (errorList.size() > 0)
