@@ -117,7 +117,49 @@ void deMorganTransform(node *root)
 }
 
 void deleteDoubleNegation(node *root)
-{
+{   //Стек для хранения отрицаний подряд
+    QList<node*> stackOfNegationsInARow;
+
+    if (root->type == NOT && root->childrens.size() == 1) {
+    stackOfNegationsInARow.append(root);
+    node* child = root->childrens.first();
+        //Собираем в стек все отрицания подряд
+        while (child->type == NOT && child->childrens.size() == 1) {
+            stackOfNegationsInARow.append(child);
+            node* grandChild = child->childrens.first();
+            child = grandChild;
+        }
+        
+        if(child->type == NAND || child->type == NOR) {
+            //Если следующий после отрицаний оператор - NAND или NOR
+            if (stackOfNegationsInARow.size() + 1 % 2 == 0) {
+            // Если отрицания в стеке не уничтожают друг друга, то уничтожить их за счет преобразования NAND и NOR в AND и OR соответственно
+                child->type = (child->type == NAND ? AND : OR);
+            }
+        } else {
+            //Если следующий после отрицаний оператор не NAND или NOR
+            if (!(stackOfNegationsInARow.size() % 2 == 0)) {
+                // Если отрицания в стеке не уничтожают друг друга, то достать из стека последнее отрицание
+                child = stackOfNegationsInARow.takeLast();
+            } 
+        }
+
+        //Если в стеке осталось больше одного отрицания, то уничтожить их
+        if (stackOfNegationsInARow.size() > 1){
+            root->data = child->data;
+            root->type = child->type;
+            root->childrens = child->childrens;
+            //Очистить память от всех узлов содержащихся в стеке
+            foreach (node* nodeToDelete, stackOfNegationsInARow) {
+                delete nodeToDelete;
+            }
+        }   
+    }
+    
+    //Рекурсивно вызвать функцию для всех детей
+    foreach (node* child, root->childrens) {
+        deleteDoubleNegation(child);
+    }
 
 }
 

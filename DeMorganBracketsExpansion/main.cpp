@@ -23,6 +23,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    //Удалить двойные отрицания
+    deleteDoubleNegation(root);
+
     //Преобразовать логическое дерево в строку
     QString outputEquasion;
     treeToString(root, outputEquasion);
