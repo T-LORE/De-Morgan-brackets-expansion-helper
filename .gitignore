@@ -34,3 +34,20 @@
 /.vscode
 
 *.user
+
+# Файлы после сборки
+/release
+/.qtc_clangd
+/Tests/release
+/Tests/debug
+/DeMorganBracketsExpansion/release
+/DeMorganBracketsExpansion/debug
+
+*.release
+*.debug
+
+/testData
+
+Makefile
+
+.qmake.stash
