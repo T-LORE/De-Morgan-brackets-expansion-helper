@@ -198,4 +198,11 @@ QString getIntrpretationOfOperator(operandType type);
 */
 void exeptionHandler(QList<error> errors);
 
+/*!
+* \Копирует узел
+* \param[in] root - указатель на корень дерева
+* \param[out] copy - указатель на копию узла
+*/
+void copyNode(node *root, node *copy);
+
 #endif // DEMORGANBRACKETSEXPANSION_H

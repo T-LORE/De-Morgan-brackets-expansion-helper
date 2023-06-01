@@ -23,6 +23,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    //Преобразовать логическое дерево по законам де Моргана
+    deMorganTransform(root);
+
     //Удалить двойные отрицания
     deleteDoubleNegation(root);
 

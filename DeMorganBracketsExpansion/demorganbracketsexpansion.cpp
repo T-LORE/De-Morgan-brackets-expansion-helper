@@ -111,8 +111,67 @@ node *createLogicalTree(QString expression)
     return stack.takeLast().element;
 }
 
+void copyNode(node *root, node *copy )
+{
+    copy->type = root->type;
+    copy->data = root->data;
+    copy->childrens = root->childrens;
+}
+
 void deMorganTransform(node *root)
 {
+    //Стек для хранения отрицаний подряд
+    QList<node*> stackOfNegationsInARow;
+
+    if (root->type == NOT && root->childrens.size() == 1) {
+    stackOfNegationsInARow.append(root);
+    node* child = root->childrens.first();
+        //Собираем в стек все отрицания подряд
+        while (child->type == NOT && child->childrens.size() == 1) {
+            stackOfNegationsInARow.append(child);
+            node* grandChild = child->childrens.first();
+            child = grandChild;
+        }
+        
+        if(child->type == AND || child->type == OR) {
+            //Если следующий после отрицаний оператор - AND или OR
+            if (!(stackOfNegationsInARow.size() % 2 == 0)) {
+                //Если в стеке четное количество отрицаний, то 
+                child->type = child->type == AND ? OR : AND;
+            }
+            
+            // Добавить то количество отрицаний, которое содержится в стеке перед детьми оператора
+            node *bufFirstOperand = child->childrens[0];
+            node *bufSecondOperand = child->childrens[1];
+
+            foreach (node* negation, stackOfNegationsInARow) {
+                node *negotiationForFirstOperand = new node();
+                node *negotiationForSecondOperand = new node();
+
+                copyNode(negation, negotiationForFirstOperand);
+                copyNode(negation, negotiationForSecondOperand);
+
+                negotiationForFirstOperand->childrens.clear();
+                negotiationForSecondOperand->childrens.clear();
+
+                negotiationForFirstOperand->childrens.append(bufFirstOperand);
+                negotiationForSecondOperand->childrens.append(bufSecondOperand);
+
+                child->childrens[0] = negotiationForFirstOperand;
+                child->childrens[1] = negotiationForSecondOperand;
+
+                bufFirstOperand = child->childrens[0];
+                bufSecondOperand = child->childrens[1];
+            }
+
+            copyNode(child, root);        
+        }  
+    }
+    
+    //Рекурсивно вызвать функцию для всех детей
+    foreach (node* child, root->childrens) {
+        deMorganTransform(child);
+    }
 
 }
 
