@@ -5,6 +5,7 @@
 #include <QList>
 #include <QMap>
 #include <QDebug>
+#include <iostream>
 
 /*!
 * \Перечисление логических операндов
