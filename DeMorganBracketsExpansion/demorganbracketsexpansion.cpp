@@ -315,3 +315,50 @@ QString getIntrpretationOfOperator(operandType type){
         }
     }
 }
+
+void exeptionHandler(QList<error> errors){
+    for (error exeption : errors)
+    {
+        switch (exeption.type)
+        {
+        case PATH_NOT_FOUND:
+            qDebug() << "Путь к файлу пустой";
+            break;
+        case FILE_NOT_FOUND:
+            qDebug() << "Файл по пути не найден";
+            break;
+        case FILE_NOT_OPENED:
+            qDebug() << "Нет доступа к файлу";
+            break;
+        case MORE_THAN_ONE_STRING:
+            qDebug() << "В файле содержится больше одной строки";
+            break;
+        case UNKNOWN_SYMBOL:
+            qDebug() << "Неизвестный символ в названии переменной " << exeption.data << " на позиции " << exeption.position;
+            break;
+        case NOT_ENOUGH_OPERATORS:
+            qDebug() << "Недостаточно операторов у " << exeption.data << " на позиции " << exeption.position;
+            break;
+        case NOT_ENOUGH_ARGUMENTS:
+            qDebug() << "Недостаточно аргументов у " << exeption.data << " на позиции " << exeption.position;
+            break;
+        case TO_MANY_SPACES:
+            qDebug() << "Неожиданный пробел на позиции " << exeption.position << " Ожидался операнд ";
+            break;
+        case EMPTY_TREE:
+            qDebug() << "Пустое дерево";
+            break;
+        case NO_ACCESS_TO_FILE:
+            qDebug() << "Нет доступа к файлу";
+            break;
+        case VARIABLE_STARTS_WITH_DIGIT:
+            qDebug() << "Переменная начинается с цифры " << exeption.data << " на позиции " << exeption.position;
+            break;
+        case EMPTY_LEXEME:
+            qDebug() << "Пустая лексема";
+            break;
+        default:
+            break;
+        }    
+    }
+}

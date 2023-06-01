@@ -4,6 +4,7 @@
 #include <QString>
 #include <QList>
 #include <QMap>
+#include <QDebug>
 
 /*!
 * \Перечисление логических операндов
@@ -189,5 +190,11 @@ lexemeType lexemeClassification(QString lexeme);
 * \return строковая интерпретация оператора
 */
 QString getIntrpretationOfOperator(operandType type);
+
+/*!
+* \Обрабатывает исключения и выводит их в консоль
+* \param[in] errors - список ошибок
+*/
+void exeptionHandler(QList<error> errors);
 
 #endif // DEMORGANBRACKETSEXPANSION_H
