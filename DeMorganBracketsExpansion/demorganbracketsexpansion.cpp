@@ -149,9 +149,11 @@ void deleteDoubleNegation(node *root)
             root->data = child->data;
             root->type = child->type;
             root->childrens = child->childrens;
+            delete child;
             //Очистить память от всех узлов содержащихся в стеке
             foreach (node* nodeToDelete, stackOfNegationsInARow) {
-                delete nodeToDelete;
+                if (nodeToDelete != root)
+                    delete nodeToDelete;
             }
         }   
     }
