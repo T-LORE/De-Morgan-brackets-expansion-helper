@@ -13,6 +13,7 @@ class test_deleteDoubleNegation: public QObject
        explicit test_deleteDoubleNegation(QObject *parent = 0);
 
 public slots:
+    void compareNodes(const node *expectedNode, const node *actualNode);
     void compareTrees(node *expectedTree, node *tree);
 
 private slots:

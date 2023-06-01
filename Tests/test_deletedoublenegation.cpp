@@ -1,25 +1,31 @@
 #include "test_deletedoublenegation.h"
 #include <QtTest>
 
+void test_deleteDoubleNegation::compareNodes(const node *expectedNode, const node *actualNode) {
+    QCOMPARE(expectedNode->data, actualNode->data);
+    QCOMPARE(expectedNode->type, actualNode->type);
 
-
-void test_deleteDoubleNegation::compareTrees(node *expectedTree, node *tree)
-{
-    if (expectedTree == NULL) {
-        QVERIFY(tree == NULL);
+    if (expectedNode->childrens.size() != actualNode->childrens.size()) {
+        QCOMPARE(expectedNode->childrens.size(), actualNode->childrens.size());
         return;
     }
-    if (tree == NULL){
-        QVERIFY(tree != NULL);
-        return;
+
+    for (int i = 0; i < expectedNode->childrens.size(); ++i) {
+        compareNodes(expectedNode->childrens.at(i), actualNode->childrens.at(i));
     }
-    QVERIFY(expectedTree->type == tree->type);
-    QVERIFY(expectedTree->data == tree->data);
+}
 
-    compareTrees(expectedTree->childrens[0], tree->childrens[0]);
-    compareTrees(expectedTree->childrens[1], tree->childrens[1]);
+void test_deleteDoubleNegation::compareTrees(node *expectedTree, node *actualTree) {
+    if (expectedTree == nullptr && actualTree == nullptr)
+        return;
+
+    if (expectedTree == nullptr && actualTree != nullptr)
+        QFAIL("expectedTree - null, actualTree не null");
+    if (expectedTree != nullptr && actualTree == nullptr)
+        QFAIL("expectedTree не null, but actualTree - null");
 
 
+    compareNodes(expectedTree, actualTree);
 }
 
 test_deleteDoubleNegation::test_deleteDoubleNegation(QObject *parent) : QObject(parent)
@@ -153,84 +159,6 @@ void test_deleteDoubleNegation::doubleNegationInTheMiddle()
 
 
     
-        node *expectedTree = new node;
-    expectedTree->type = XOR;
-
-    expectedTree->childrens.append(new node);
-    expectedTree->childrens[0]->type = VARIABLE;
-    expectedTree->childrens[0]->data = "D";
-    expectedTree->childrens.append(new node);
-    expectedTree->childrens[1]->type = OR;
-
-    expectedTree->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[0]->type = XOR;
-    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[0]->childrens[0]->data = "D";
-    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[0]->childrens[1]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[0]->childrens[1]->data = "C";
-
-    expectedTree->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->type = NOT;
-    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = NOT;
-    
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = OR;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->data = "B";
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[1]->data = "A";
-
-    deleteDoubleNegation(tree);
-
-    compareTrees(expectedTree, tree);
-
-}
-
-void test_deleteDoubleNegation::doubleNegationInTheEnd()
-{
-    node *tree = new node;
-    tree->type = XOR;
-
-    tree->childrens.append(new node);
-    tree->childrens[0]->type = VARIABLE;
-    tree->childrens[0]->data = "D";
-    tree->childrens.append(new node);
-    tree->childrens[1]->type = OR;
-
-    tree->childrens[1]->childrens.append(new node);
-    tree->childrens[1]->childrens[0]->type = XOR;
-    tree->childrens[1]->childrens[0]->childrens.append(new node);
-    tree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
-    tree->childrens[1]->childrens[0]->childrens[0]->data = "D";
-    tree->childrens[1]->childrens[0]->childrens.append(new node);
-    tree->childrens[1]->childrens[0]->childrens[1]->type = VARIABLE;
-    tree->childrens[1]->childrens[0]->childrens[1]->data = "C";
-
-   
-    
-    tree->childrens[1]->childrens.append(new node);
-    tree->childrens[1]->childrens[1]->type = OR;
-    tree->childrens[1]->childrens[1]->childrens.append(new node);
-    tree->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
-    tree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->data = "B";
-
-    tree->childrens[1]->childrens[1]->childrens.append(new node);
-    tree->childrens[1]->childrens[1]->childrens[1]->type = NOT;
-    tree->childrens[1]->childrens[1]->childrens[1]->childrens.append(new node);
-    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->type = NOT;
-    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
-    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
-    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->childrens[0]->data = "A";
-
-
-
-
-    
     node *expectedTree = new node;
     expectedTree->type = XOR;
 
@@ -250,18 +178,85 @@ void test_deleteDoubleNegation::doubleNegationInTheEnd()
     expectedTree->childrens[1]->childrens[0]->childrens[1]->data = "C";
 
     expectedTree->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->type = OR;
+
     expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = NOT;
-    
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = OR;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->data = "B";
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[1]->data = "A";
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->data = "B";
+    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[1]->data = "A";
+
+    deleteDoubleNegation(tree);
+
+    compareTrees(expectedTree, tree);
+
+}
+
+void test_deleteDoubleNegation::doubleNegationInTheEnd()
+{
+    //Выражение в обратной польской нотации A ! ! B + C D - + D -
+    node *tree = new node;
+    tree->type = XOR;
+
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "D";
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = OR;
+
+    tree->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[0]->type = XOR;
+    tree->childrens[1]->childrens[0]->childrens.append(new node);
+    tree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[1]->childrens[0]->childrens[0]->data = "D";
+    tree->childrens[1]->childrens[0]->childrens.append(new node);
+    tree->childrens[1]->childrens[0]->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->childrens[0]->childrens[1]->data = "C";
+
+    tree->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->type = OR;
+    tree->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[1]->childrens[1]->childrens[0]->data = "B";
+
+    tree->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->childrens[1]->type = NOT;
+    tree->childrens[1]->childrens[1]->childrens[1]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->type = NOT;
+    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
+    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[1]->childrens[1]->childrens[1]->childrens[0]->childrens[0]->data = "A";
+
+
+    node *expectedTree = new node;
+    expectedTree->type = XOR;
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->data = "D";
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = OR;
+
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = XOR;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->data = "D";
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[1]->data = "C";
+
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->type = OR;
+
+    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->data = "B";
+    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[1]->data = "A";
+
 
     deleteDoubleNegation(tree);
 
@@ -310,7 +305,7 @@ void test_deleteDoubleNegation::fourTransformationsInDifferentPlaces()
 
     tree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
     tree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
-    tree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->data = "B";
+    tree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->data = "B";
 
     tree->childrens[1]->childrens[1]->childrens.append(new node);
     tree->childrens[1]->childrens[1]->childrens[1]->type = NOT;
@@ -343,18 +338,14 @@ void test_deleteDoubleNegation::fourTransformationsInDifferentPlaces()
     expectedTree->childrens[1]->childrens[0]->childrens[1]->data = "C";
 
     expectedTree->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->type = OR;
+
     expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = NOT;
-    
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = OR;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->data = "B";
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
-    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[1]->data = "A";
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->data = "B";
+    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[1]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[1]->data = "A";
 
     deleteDoubleNegation(tree);
 
@@ -388,7 +379,7 @@ void test_deleteDoubleNegation::twoTransformationsInARow()
     expectedTree->childrens[0]->type = VARIABLE;
     expectedTree->childrens[0]->data = "A";
 
-    
+    expectedTree->childrens.append(new node);
     expectedTree->childrens[1]->type = VARIABLE;
     expectedTree->childrens[1]->data = "B";
 
