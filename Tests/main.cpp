@@ -17,9 +17,10 @@ int main(int argc, char *argv[])
     //QCoreApplication a(argc, argv);
 
     QTest::qExec(new test_variableValidation, argc, argv);
-    //QTest::qExec(new test_createLogicalTree, argc, argv);
-    //QTest::qExec(new test_deMorganTransform, argc, argv);
-    //QTest::qExec(new test_deleteDoubleNegation, argc, argv);
-    //QTest::qExec(new test_treeToString, argc, argv);
+    QTest::qExec(new test_createLogicalTree, argc, argv);
+    QTest::qExec(new test_deMorganTransform, argc, argv);
+    QTest::qExec(new test_deleteDoubleNegation, argc, argv);
+    QTest::qExec(new test_treeToString, argc, argv);
+
     return 0;
 }
