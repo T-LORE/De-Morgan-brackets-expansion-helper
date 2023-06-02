@@ -120,22 +120,15 @@ void copyNode(node *root, node *copy )
 
 void deMorganTransform(node *root)
 {
-    //Стек для хранения отрицаний подряд
-    QList<node*> stackOfNegationsInARow;
-
     if (root->type == NOT && root->childrens.size() == 1) {
-    stackOfNegationsInARow.append(root);
-    node* child = root->childrens.first();
-        //Собираем в стек все отрицания подряд
-        while (child->type == NOT && child->childrens.size() == 1) {
-            stackOfNegationsInARow.append(child);
-            node* grandChild = child->childrens.first();
-            child = grandChild;
-        }
+        //Считаем количество отрицаний подряд
+        int negationsInARow = nodeInARow(root, NOT).size();
+        //следующий после отрицаний узел
+        node* child = nodeInARow(root, NOT).last()->childrens.first();
         
         if(child->type == AND || child->type == OR) {
             //Если следующий после отрицаний оператор - AND или OR
-            if (!(stackOfNegationsInARow.size() % 2 == 0)) {
+            if (!(negationsInARow % 2 == 0)) {
                 //Если в стеке четное количество отрицаний, то 
                 child->type = child->type == AND ? OR : AND;
             }
@@ -144,8 +137,8 @@ void deMorganTransform(node *root)
             negationNode->type = NOT;
             //negationNode->data = getIntrpretationOfOperator(NOT);
             // Добавить то количество отрицаний перед детьми оператора, которое содержится в стеке 
-            insertBetween(child, 0, negationNode, stackOfNegationsInARow.size());
-            insertBetween(child, 1, negationNode, stackOfNegationsInARow.size());
+            insertBetween(child, 0, negationNode, negationsInARow);
+            insertBetween(child, 1, negationNode, negationsInARow);
 
             copyNode(child, root);        
         }  
@@ -156,6 +149,17 @@ void deMorganTransform(node *root)
         deMorganTransform(child);
     }
 
+}
+
+QList<node*> nodeInARow(node *root, int type)
+{
+    QList<node*> stackOfNodesInARow;
+    node *currentNode = root;
+    while (currentNode->type == type) {
+            stackOfNodesInARow.append(currentNode);
+            currentNode = currentNode->childrens.first();
+        }
+    return stackOfNodesInARow;    
 }
 
 void insertBetween(node *parent, int childId, node *nodeToInsert, int n)
@@ -173,18 +177,12 @@ void insertBetween(node *parent, int childId, node *nodeToInsert, int n)
 }
 
 void deleteDoubleNegation(node *root)
-{   //Стек для хранения отрицаний подряд
-    QList<node*> stackOfNegationsInARow;
-
+{   
     if (root->type == NOT && root->childrens.size() == 1) {
-    stackOfNegationsInARow.append(root);
-    node* child = root->childrens.first();
-        //Собираем в стек все отрицания подряд
-        while (child->type == NOT && child->childrens.size() == 1) {
-            stackOfNegationsInARow.append(child);
-            node* grandChild = child->childrens.first();
-            child = grandChild;
-        }
+        //Собираем в стек все отрицания идущие подряд
+        QList<node*> stackOfNegationsInARow = nodeInARow(root, NOT);
+        //следующий после отрицаний узел
+        node *child = stackOfNegationsInARow.last()->childrens.first();
         
         if(child->type == NAND || child->type == NOR) {
             //Если следующий после отрицаний оператор - NAND или NOR
@@ -202,9 +200,7 @@ void deleteDoubleNegation(node *root)
 
         //Если в стеке осталось больше одного отрицания, то уничтожить их
         if (stackOfNegationsInARow.size() > 1){
-            root->data = child->data;
-            root->type = child->type;
-            root->childrens = child->childrens;
+            copyNode(child, root);
             delete child;
             //Очистить память от всех узлов содержащихся в стеке
             foreach (node* nodeToDelete, stackOfNegationsInARow) {

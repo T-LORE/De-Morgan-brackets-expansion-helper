@@ -214,4 +214,13 @@ void copyNode(node *root, node *copy);
 */
 void insertBetween(node *parent, int childId, node *nodeToInsert, int n);
 
+/*!
+* \Возвращает список подряд идущих узлов определенного типа, каждый узел в ряду должен иметь только одного ребенка
+* \param[in] root - указатель на корень дерева
+* \param[in] type - тип узла
+* \param[in] postChild - указатель на узел, идущий после искомых узлов
+* \return QList<node*> - список узлов
+*/ 
+QList<node*> nodeInARow(node *root, int type);
+
 #endif // DEMORGANBRACKETSEXPANSION_H
