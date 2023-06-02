@@ -28,8 +28,15 @@ class test_deMorganTransform: public QObject
     void threeTransformationsInARow();
     void emptyTree();
     void noTransformationsRequired();
+    void nand();
+    void nor();
+    void negatiatedNand();
+    void negatiatedNor();
+    void negatiatedNandAndNor();
+    void doubleNegatiatedNand();
+    void doubleNegatiatedNor();
+    void doubleNegatiatedNandAndNor();
     void complexTest1();
-    void complexTest2();
     void cleanupTestCase();
 
 };

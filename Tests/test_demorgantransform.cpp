@@ -481,6 +481,342 @@ void test_deMorganTransform::noTransformationsRequired()
 
 }
 
+void test_deMorganTransform::nand()
+{ // A B *!
+    node *tree = new node;
+    tree->type = NAND;
+
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "A";
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->data = "B";
+
+    node *expectedTree = new node;
+    expectedTree->type = OR;
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->data = "A";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->data = "B";
+
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
+void test_deMorganTransform::nor()
+{ // A B +!
+    node *tree = new node;
+    tree->type = NOR;
+
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->data = "A";
+    tree->childrens.append(new node);
+    tree->childrens[1]->type = VARIABLE;
+    tree->childrens[1]->data = "B";
+
+    node *expectedTree = new node;
+    expectedTree->type = AND;
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->data = "A";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->data = "B";
+
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
+void test_deMorganTransform::negatiatedNand()
+{ // A B *! !
+    node *tree = new node;
+    tree->type = NOT;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = NAND;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->data = "A";
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->data = "B";
+    
+    node *expectedTree = new node;
+    expectedTree->type = AND;
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "A";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->data = "B";
+
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
+void test_deMorganTransform::negatiatedNor()
+{// A B +! !
+    node *tree = new node;
+    tree->type = NOT;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = NOR;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->data = "A";
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->data = "B";
+    
+    node *expectedTree = new node;
+    expectedTree->type = OR;
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "A";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->data = "B";
+
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+
+}
+
+void test_deMorganTransform::negatiatedNandAndNor()
+{
+    // C D *! A B +! * !
+    //node *tree = createLogicalTree("C A B *! +! !");
+    node *tree = new node;
+    tree->type = NOT;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = NOR;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->data = "C";
+
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->type = NAND;
+    tree->childrens[0]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->childrens[0]->data = "A";
+    tree->childrens[0]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->childrens[1]->data = "B";
+
+    //node *expectedTree = createLogicalTree("C ! ! A ! ! ! B ! ! ! + +");
+    node *expectedTree = new node;
+    expectedTree->type = OR;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "C";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = OR;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->data = "A";
+
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->data = "B";
+
+    
+
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
+void test_deMorganTransform::doubleNegatiatedNand()
+{
+    // A B *! ! !
+    //node *tree = createLogicalTree("A B *! !");
+    node * tree = new node;
+    tree->type = NOT;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = NAND;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->data = "B";
+
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->data = "A";
+
+    //node *expectedTree = createLogicalTree("A ! ! B ! ! *");
+    node *expectedTree = new node;
+    expectedTree->type = AND;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "B";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->data = "A";
+
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
+void test_deMorganTransform::doubleNegatiatedNor()
+{
+    // A B +! ! !
+    //node *tree = createLogicalTree("A B +! !");
+    node * tree = new node;
+    tree->type = NOT;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = NOR;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->data = "B";
+
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[1]->data = "A";
+
+    //node *expectedTree = createLogicalTree("A ! ! B ! ! +");
+    node *expectedTree = new node;
+    expectedTree->type = OR;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->data = "B";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->data = "A";
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
+void test_deMorganTransform::doubleNegatiatedNandAndNor()
+{
+    // C D *! A B +! * ! !
+    node *tree = new node;
+    tree->type = NOT;
+    tree->childrens.append(new node);
+    tree->childrens[0]->type = NOT;
+    tree->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->type = NOR;
+    tree->childrens[0]->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->childrens[0]->data = "C";
+    tree->childrens[0]->childrens[0]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->childrens[1]->type = NAND;
+    tree->childrens[0]->childrens[0]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->childrens[1]->childrens[0]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->childrens[1]->childrens[0]->data = "A";
+    tree->childrens[0]->childrens[0]->childrens[1]->childrens.append(new node);
+    tree->childrens[0]->childrens[0]->childrens[1]->childrens[1]->type = VARIABLE;
+    tree->childrens[0]->childrens[0]->childrens[1]->childrens[1]->data = "B";
+
+    //node *expectedTree = createLogicalTree("C ! ! ! A ! ! ! ! B ! ! ! ! * *");
+    node *expectedTree = new node;
+    expectedTree->type = AND;
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[0]->childrens[0]->childrens[0]->childrens[0]->data = "C";
+
+    expectedTree->childrens.append(new node);
+    expectedTree->childrens[1]->type = AND;
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->data = "A";
+
+    expectedTree->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->type = NOT;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens.append(new node);
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->type = VARIABLE;
+    expectedTree->childrens[1]->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[0]->data = "B";
+    
+    deMorganTransform(tree);
+    compareTrees(expectedTree, tree);
+}
+
 void test_deMorganTransform::complexTest1()
 {
     //V F + U * ! C * J Q + ! ! ! *
@@ -526,11 +862,6 @@ void test_deMorganTransform::complexTest1()
     tree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[1]->type = VARIABLE;
     tree->childrens[1]->childrens[0]->childrens[0]->childrens[0]->childrens[1]->data = "Q";
 
-
-}
-
-void test_deMorganTransform::complexTest2()
-{
 
 }
 
