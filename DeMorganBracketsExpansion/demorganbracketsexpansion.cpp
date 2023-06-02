@@ -120,7 +120,7 @@ void copyNode(node *root, node *copy )
 
 void deMorganTransform(node *root)
 {
-    if (root->type == NOT && root->childrens.size() == 1) {
+    if (root->type == NOT) {
         //Считаем количество отрицаний подряд
         int negationsInARow = nodeInARow(root, NOT).size();
         //следующий после отрицаний узел
@@ -178,7 +178,7 @@ void insertBetween(node *parent, int childId, node *nodeToInsert, int n)
 
 void deleteDoubleNegation(node *root)
 {   
-    if (root->type == NOT && root->childrens.size() == 1) {
+    if (root->type == NOT) {
         //Собираем в стек все отрицания идущие подряд
         QList<node*> stackOfNegationsInARow = nodeInARow(root, NOT);
         //следующий после отрицаний узел
