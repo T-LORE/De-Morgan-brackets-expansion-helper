@@ -120,28 +120,52 @@ void copyNode(node *root, node *copy )
 
 void deMorganTransform(node *root)
 {
-    if (root->type == NOT) {
+    if (root->type == NOT || root->type == NAND || root->type == NOR) {
         //Считаем количество отрицаний подряд
         int negationsInARow = nodeInARow(root, NOT).size();
-        //следующий после отрицаний узел
-        node* child = nodeInARow(root, NOT).last()->childrens.first();
-        
-        if(child->type == AND || child->type == OR) {
-            //Если следующий после отрицаний оператор - AND или OR
-            if (!(negationsInARow % 2 == 0)) {
-                //Если в стеке четное количество отрицаний, то 
-                child->type = child->type == AND ? OR : AND;
+
+        //следующий узел не являющийся отрицанием
+        QList<node*> negationsRow = nodeInARow(root, NOT); 
+        node *child = negationsRow.isEmpty() ? root : negationsRow.last()->childrens.first();
+
+        // Учитываем отрицания в NAND и NOR
+        negationsInARow += child->type == NAND || child->type == NOR ? 1 : 0;
+        if (child->type == AND || child->type == OR || child->type == NAND || child->type == NOR && negationsInARow != 0){
+            switch (child->type)
+            {
+            case AND:
+                child->type = negationsInARow % 2 == 0 ? AND : OR;
+                break;
+            case OR:
+                child->type = negationsInARow % 2 == 0 ? OR : AND;
+                break;
+            case NAND:
+                child->type = negationsInARow % 2 == 0 ? AND : OR;
+                break;
+            case NOR:
+                child->type = negationsInARow % 2 == 0 ? OR : AND;
+                break;
             }
-            
+            //child->data = getIntrpretationOfOperator(child->type);
             node *negationNode = new node();
             negationNode->type = NOT;
             //negationNode->data = getIntrpretationOfOperator(NOT);
             // Добавить то количество отрицаний перед детьми оператора, которое содержится в стеке 
             insertBetween(child, 0, negationNode, negationsInARow);
             insertBetween(child, 1, negationNode, negationsInARow);
-
-            copyNode(child, root);        
-        }  
+            
+            //Удалить отрицания если они есть
+            if (child != root){
+                copyNode(child, root);
+                delete child;
+                foreach (node* nodeToDelete, negationsRow) {
+                if (nodeToDelete != root)
+                    delete nodeToDelete;
+                } 
+            }
+            
+            
+        }
     }
     
     //Рекурсивно вызвать функцию для всех детей
