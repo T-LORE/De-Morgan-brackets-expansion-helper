@@ -140,29 +140,12 @@ void deMorganTransform(node *root)
                 child->type = child->type == AND ? OR : AND;
             }
             
-            // Добавить то количество отрицаний, которое содержится в стеке перед детьми оператора
-            node *bufFirstOperand = child->childrens[0];
-            node *bufSecondOperand = child->childrens[1];
-
-            foreach (node* negation, stackOfNegationsInARow) {
-                node *negotiationForFirstOperand = new node();
-                node *negotiationForSecondOperand = new node();
-
-                copyNode(negation, negotiationForFirstOperand);
-                copyNode(negation, negotiationForSecondOperand);
-
-                negotiationForFirstOperand->childrens.clear();
-                negotiationForSecondOperand->childrens.clear();
-
-                negotiationForFirstOperand->childrens.append(bufFirstOperand);
-                negotiationForSecondOperand->childrens.append(bufSecondOperand);
-
-                child->childrens[0] = negotiationForFirstOperand;
-                child->childrens[1] = negotiationForSecondOperand;
-
-                bufFirstOperand = child->childrens[0];
-                bufSecondOperand = child->childrens[1];
-            }
+            node *negationNode = new node();
+            negationNode->type = NOT;
+            //negationNode->data = getIntrpretationOfOperator(NOT);
+            // Добавить то количество отрицаний перед детьми оператора, которое содержится в стеке 
+            insertBetween(child, 0, negationNode, stackOfNegationsInARow.size());
+            insertBetween(child, 1, negationNode, stackOfNegationsInARow.size());
 
             copyNode(child, root);        
         }  
@@ -173,6 +156,20 @@ void deMorganTransform(node *root)
         deMorganTransform(child);
     }
 
+}
+
+void insertBetween(node *parent, int childId, node *nodeToInsert, int n)
+{
+    node *currentChild = parent->childrens[childId];
+    
+    for (int i = 0; i < n; i++)
+    {
+        node *insertNode = new node();
+        copyNode(nodeToInsert, insertNode);
+        insertNode->childrens.append(currentChild);
+        parent->childrens[childId] = insertNode;
+        currentChild = parent->childrens[childId];
+    }
 }
 
 void deleteDoubleNegation(node *root)

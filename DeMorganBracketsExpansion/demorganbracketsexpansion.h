@@ -205,4 +205,13 @@ void exeptionHandler(QList<error> errors);
 */
 void copyNode(node *root, node *copy);
 
+/*!
+* \Вставляет копии полученного узла между родителем и ребенком n раз
+* \param[in] parent - указатель на родителя
+* \param[in] childId - номер ребенка
+* \param[in] nodeToInsert - указатель на узел, который необходимо вставить
+* \param[in] n - сколько копий необходимо вставить
+*/
+void insertBetween(node *parent, int childId, node *nodeToInsert, int n);
+
 #endif // DEMORGANBRACKETSEXPANSION_H
