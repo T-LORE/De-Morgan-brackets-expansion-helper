@@ -25,13 +25,15 @@ node *createLogicalTree(QString expression)
     {
         switch (lexemeClassification(currentLexeme))
         {
-        case EMPTY:{
+        case EMPTY:
+        {
             // Текущая лексема - пустая
             errorList.append({TO_MANY_SPACES, currentLexemePosition, currentLexeme}); // Лишний разделитель (пробел)
             break;
-            }
+        }
 
-        case OPERATOR:{
+        case OPERATOR:
+        {
             // Текущая лексема - оператор
             node *operatorNode = new node();
             operatorNode->type = operatorsMap[currentLexeme].type;
@@ -54,9 +56,10 @@ node *createLogicalTree(QString expression)
             // Добавить новый узел в стек
             stack.append({operatorNode, currentLexemePosition});
             break;
-            }
+        }
 
-        case VAR:{
+        case VAR:
+        {
             // Текущая лексема - переменная
             node *variableNode = new node();
             variableNode->type = VARIABLE;
@@ -65,9 +68,10 @@ node *createLogicalTree(QString expression)
             // Добавить новый узел в стек
             stack.append({variableNode, currentLexemePosition});
             break;
-            }
+        }
 
-        case UNKNOWN_LEXEME:{
+        case UNKNOWN_LEXEME:
+        {
             // Ошибки в написании переменной
             // Добавить ошибки в общий список
             for (error exeption : variableValidation(currentLexeme))
@@ -76,7 +80,7 @@ node *createLogicalTree(QString expression)
                 errorList.append(exeption);
             }
             break;
-            }
+        }
         }
 
         // Позиция считается как сумма длин всех предыдущих лексем + кол-во разделителей
@@ -99,8 +103,6 @@ node *createLogicalTree(QString expression)
         }
     }
 
-
-
     // Если во время обработки выражения возникли ошибки, то выбросить их
     if (errorList.size() > 0)
     {
@@ -111,7 +113,7 @@ node *createLogicalTree(QString expression)
     return stack.takeLast().element;
 }
 
-void copyNode(node *root, node *copy )
+void copyNode(node *root, node *copy)
 {
     copy->type = root->type;
     copy->data = root->data;
@@ -120,17 +122,19 @@ void copyNode(node *root, node *copy )
 
 void deMorganTransform(node *root)
 {
-    if (root->type == NOT || root->type == NAND || root->type == NOR) {
-        //Считаем количество отрицаний подряд
+    if (root->type == NOT || root->type == NAND || root->type == NOR)
+    {
+        // Считаем количество отрицаний подряд
         int negationsInARow = nodeInARow(root, NOT).size();
 
-        //следующий узел не являющийся отрицанием
-        QList<node*> negationsRow = nodeInARow(root, NOT); 
+        // следующий узел не являющийся отрицанием
+        QList<node *> negationsRow = nodeInARow(root, NOT);
         node *child = negationsRow.isEmpty() ? root : negationsRow.last()->childrens.first();
 
         // Учитываем отрицания в NAND и NOR
         negationsInARow += child->type == NAND || child->type == NOR ? 1 : 0;
-        if (child->type == AND || child->type == OR || child->type == NAND || child->type == NOR && negationsInARow != 0){
+        if (child->type == AND || child->type == OR || child->type == NAND || child->type == NOR && negationsInARow != 0)
+        {
             switch (child->type)
             {
             case AND:
@@ -146,50 +150,51 @@ void deMorganTransform(node *root)
                 child->type = negationsInARow % 2 == 0 ? OR : AND;
                 break;
             }
-            //child->data = getIntrpretationOfOperator(child->type);
+            // child->data = getIntrpretationOfOperator(child->type);
             node *negationNode = new node();
             negationNode->type = NOT;
-            //negationNode->data = getIntrpretationOfOperator(NOT);
-            // Добавить то количество отрицаний перед детьми оператора, которое содержится в стеке 
+            // negationNode->data = getIntrpretationOfOperator(NOT);
+            //  Добавить то количество отрицаний перед детьми оператора, которое содержится в стеке
             insertBetween(child, 0, negationNode, negationsInARow);
             insertBetween(child, 1, negationNode, negationsInARow);
-            
-            //Удалить отрицания если они есть
-            if (child != root){
+
+            // Удалить отрицания если они есть
+            if (child != root)
+            {
                 copyNode(child, root);
                 delete child;
-                foreach (node* nodeToDelete, negationsRow) {
-                if (nodeToDelete != root)
-                    delete nodeToDelete;
-                } 
+                foreach (node *nodeToDelete, negationsRow)
+                {
+                    if (nodeToDelete != root)
+                        delete nodeToDelete;
+                }
             }
-            
-            
         }
     }
-    
-    //Рекурсивно вызвать функцию для всех детей
-    foreach (node* child, root->childrens) {
+
+    // Рекурсивно вызвать функцию для всех детей
+    foreach (node *child, root->childrens)
+    {
         deMorganTransform(child);
     }
-
 }
 
-QList<node*> nodeInARow(node *root, int type)
+QList<node *> nodeInARow(node *root, int type)
 {
-    QList<node*> stackOfNodesInARow;
+    QList<node *> stackOfNodesInARow;
     node *currentNode = root;
-    while (currentNode->type == type) {
-            stackOfNodesInARow.append(currentNode);
-            currentNode = currentNode->childrens.first();
-        }
-    return stackOfNodesInARow;    
+    while (currentNode->type == type)
+    {
+        stackOfNodesInARow.append(currentNode);
+        currentNode = currentNode->childrens.first();
+    }
+    return stackOfNodesInARow;
 }
 
 void insertBetween(node *parent, int childId, node *nodeToInsert, int n)
 {
     node *currentChild = parent->childrens[childId];
-    
+
     for (int i = 0; i < n; i++)
     {
         node *insertNode = new node();
@@ -201,107 +206,119 @@ void insertBetween(node *parent, int childId, node *nodeToInsert, int n)
 }
 
 void deleteDoubleNegation(node *root)
-{   
-    if (root->type == NOT) {
-        //Собираем в стек все отрицания идущие подряд
-        QList<node*> stackOfNegationsInARow = nodeInARow(root, NOT);
-        //следующий после отрицаний узел
+{
+    if (root->type == NOT)
+    {
+        // Собираем в стек все отрицания идущие подряд
+        QList<node *> stackOfNegationsInARow = nodeInARow(root, NOT);
+        // следующий после отрицаний узел
         node *child = stackOfNegationsInARow.last()->childrens.first();
-        
-        if(child->type == NAND || child->type == NOR) {
-            //Если следующий после отрицаний оператор - NAND или NOR
-            if (stackOfNegationsInARow.size() + 1 % 2 == 0) {
-            // Если отрицания в стеке не уничтожают друг друга, то уничтожить их за счет преобразования NAND и NOR в AND и OR соответственно
+
+        if (child->type == NAND || child->type == NOR)
+        {
+            // Если следующий после отрицаний оператор - NAND или NOR
+            if (stackOfNegationsInARow.size() + 1 % 2 == 0)
+            {
+                // Если отрицания в стеке не уничтожают друг друга, то уничтожить их за счет преобразования NAND и NOR в AND и OR соответственно
                 child->type = (child->type == NAND ? AND : OR);
             }
-        } else {
-            //Если следующий после отрицаний оператор не NAND или NOR
-            if (!(stackOfNegationsInARow.size() % 2 == 0)) {
+        }
+        else
+        {
+            // Если следующий после отрицаний оператор не NAND или NOR
+            if (!(stackOfNegationsInARow.size() % 2 == 0))
+            {
                 // Если отрицания в стеке не уничтожают друг друга, то достать из стека последнее отрицание
                 child = stackOfNegationsInARow.takeLast();
-            } 
+            }
         }
 
-        //Если в стеке осталось больше одного отрицания, то уничтожить их
-        if (stackOfNegationsInARow.size() > 1){
+        // Если в стеке осталось больше одного отрицания, то уничтожить их
+        if (stackOfNegationsInARow.size() > 1)
+        {
             copyNode(child, root);
             delete child;
-            //Очистить память от всех узлов содержащихся в стеке
-            foreach (node* nodeToDelete, stackOfNegationsInARow) {
+            // Очистить память от всех узлов содержащихся в стеке
+            foreach (node *nodeToDelete, stackOfNegationsInARow)
+            {
                 if (nodeToDelete != root)
                     delete nodeToDelete;
             }
-        }   
-    }
-    
-    //Рекурсивно вызвать функцию для всех детей
-    foreach (node* child, root->childrens) {
-        deleteDoubleNegation(child);
+        }
     }
 
+    // Рекурсивно вызвать функцию для всех детей
+    foreach (node *child, root->childrens)
+    {
+        deleteDoubleNegation(child);
+    }
 }
 
 void treeToString(node *root, QString &str)
 {
     QList<error> errorList;
-    QList<node*> stack;
+    QList<node *> stack;
     QList<QString> outputStack;
 
-    if (root == nullptr) {
+    if (root == nullptr)
+    {
         str = "";
         return;
     }
-    
+
     stack.append(root);
-    while (!stack.isEmpty()) {
-        node* current = stack.takeLast();
+    while (!stack.isEmpty())
+    {
+        node *current = stack.takeLast();
         switch (current->type)
         {
         case VARIABLE:
             if (variableValidation(current->data).isEmpty())
                 outputStack.append(current->data);
-            else {
+            else
+            {
                 for (error exeption : variableValidation(current->data))
                 {
                     errorList.append(exeption);
                 }
             }
             break;
-        
+
         case NULL_ELEMENT:
             errorList.append({EMPTY_TREE, 0, ""});
             break;
-        
+
         default:
-            for (int i = current->childrens.size() - 1; i >= 0; --i) {
+            for (int i = current->childrens.size() - 1; i >= 0; --i)
+            {
                 stack.append(current->childrens[i]);
             }
             outputStack.append(getIntrpretationOfOperator(current->type));
             break;
         }
-        
     }
 
     if (errorList.size() > 0)
     {
         throw errorList;
     }
-   
+
     str = "";
-    while (!outputStack.isEmpty()) {
+    while (!outputStack.isEmpty())
+    {
         str += outputStack.takeLast();
         if (!outputStack.isEmpty())
             str += " ";
-    } 
-
+    }
 }
 
 QString getStringFromFile(QString path)
 
-{   
+{
     QList<error> errorList;
 
-    if (path.isEmpty()) {
+    if (path.isEmpty())
+    {
         // Путь к файлу пустой
         error pathError;
         pathError.type = PATH_NOT_FOUND;
@@ -310,7 +327,8 @@ QString getStringFromFile(QString path)
     }
 
     QFile file(path);
-    if (!file.exists()) {
+    if (!file.exists())
+    {
         // Файл по пути не найден
         error fileError;
         fileError.type = FILE_NOT_FOUND;
@@ -318,7 +336,8 @@ QString getStringFromFile(QString path)
         throw errorList;
     }
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         // Нет доступа к файлу
         error fileError;
         fileError.type = FILE_NOT_OPENED;
@@ -329,7 +348,8 @@ QString getStringFromFile(QString path)
     QTextStream in(&file);
     QString line = in.readLine();
 
-    if (!line.isNull() && !in.atEnd()) {
+    if (!line.isNull() && !in.atEnd())
+    {
         // В файле содержится больше одной строки
         error multipleStringsError;
         multipleStringsError.type = MORE_THAN_ONE_STRING;
@@ -338,7 +358,6 @@ QString getStringFromFile(QString path)
     }
 
     return line;
-
 }
 
 void saveStringToFile(QString path, QString str)
@@ -346,7 +365,8 @@ void saveStringToFile(QString path, QString str)
     QList<error> errorList;
 
     // Проверка наличия пути к файлу
-    if (path.isEmpty()) {
+    if (path.isEmpty())
+    {
         // Путь к файлу пустой
         error pathError;
         pathError.type = PATH_NOT_FOUND;
@@ -358,7 +378,8 @@ void saveStringToFile(QString path, QString str)
     QFile file(path);
 
     // Проверка доступа к файлу
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
         // Нет доступа к файлу
         error noAccessToFileError;
         noAccessToFileError.type = NO_ACCESS_TO_FILE;
@@ -367,19 +388,17 @@ void saveStringToFile(QString path, QString str)
     }
 
     // поток записи в файл
-    QTextStream out(&file); 
-    out << str; 
+    QTextStream out(&file);
+    out << str;
 
     file.close();
-
-
 }
 
 QList<error> variableValidation(QString lexeme)
 {
     QList<error> errorList;
     if (lexeme == "")
-    {   
+    {
         error emptyLexemeError = {EMPTY_LEXEME, 0, ""};
         errorList.append(emptyLexemeError);
         return errorList;
@@ -389,7 +408,6 @@ QList<error> variableValidation(QString lexeme)
     {
         error digitError = {VARIABLE_STARTS_WITH_DIGIT, 0, lexeme[0]};
         errorList.append(digitError);
-        
     }
 
     for (int i = 0; i < lexeme.length(); i++)
@@ -398,7 +416,6 @@ QList<error> variableValidation(QString lexeme)
         {
             error incorrectSymbolError = {UNKNOWN_SYMBOL, i, lexeme[i]};
             errorList.append(incorrectSymbolError);
-            
         }
     }
 
@@ -425,18 +442,23 @@ lexemeType lexemeClassification(QString lexeme)
     }
 }
 
-QString getIntrpretationOfOperator(operandType type){
-    if (type == VARIABLE){
+QString getIntrpretationOfOperator(operandType type)
+{
+    if (type == VARIABLE)
+    {
         return "VARIABLE";
     }
-    for (auto iterator=operatorsMap.begin(); iterator!=operatorsMap.end(); iterator++) {
-        if (iterator.value().type == type) {
+    for (auto iterator = operatorsMap.begin(); iterator != operatorsMap.end(); iterator++)
+    {
+        if (iterator.value().type == type)
+        {
             return iterator.key();
         }
     }
 }
 
-void exeptionHandler(QList<error> errors){
+void exeptionHandler(QList<error> errors)
+{
     for (error exeption : errors)
     {
         switch (exeption.type)
@@ -479,6 +501,6 @@ void exeptionHandler(QList<error> errors){
             break;
         default:
             break;
-        }    
+        }
     }
 }
