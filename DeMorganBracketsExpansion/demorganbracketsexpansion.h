@@ -11,6 +11,8 @@
 #include <QMap>
 #include <QDebug>
 #include <iostream>
+#include <QFile>
+#include <QTextStream>
 
 /*!
 * \brief Перечисление логических операндов
