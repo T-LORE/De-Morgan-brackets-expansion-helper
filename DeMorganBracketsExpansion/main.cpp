@@ -5,6 +5,11 @@ int main(int argc, char *argv[])
     //Поддержка русского языка в консоли
     setlocale(LC_ALL, "");
 
+    if (argc > 3){
+        exeptionHandler(QList<error>() << error(TO_MANY_ARGUMENTS, 0, ""));
+        return 0;
+    }
+
     //Получить строку из файла
     QString equasion;
     try {

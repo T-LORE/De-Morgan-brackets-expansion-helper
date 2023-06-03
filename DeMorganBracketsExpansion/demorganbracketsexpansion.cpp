@@ -273,6 +273,7 @@ void treeToString(node *root, QString &str)
         switch (current->type)
         {
         case VARIABLE:
+            // Если переменная - добавить ее в стек вывода
             if (variableValidation(current->data).isEmpty())
                 outputStack.append(current->data);
             else
@@ -289,6 +290,7 @@ void treeToString(node *root, QString &str)
             break;
 
         default:
+            // Если оператор - добавить его интерпретацию в стек вывода
             for (int i = current->childrens.size() - 1; i >= 0; --i)
             {
                 stack.append(current->childrens[i]);
@@ -303,6 +305,7 @@ void treeToString(node *root, QString &str)
         throw errorList;
     }
 
+    // Собрать строку из стека вывода в обратном порядке
     str = "";
     while (!outputStack.isEmpty())
     {
@@ -448,7 +451,7 @@ QString getIntrpretationOfOperator(operandType type)
     {
         return "VARIABLE";
     }
-    for (auto iterator = operatorsMap.begin(); iterator != operatorsMap.end(); iterator++)
+    for (QMap<QString, operators>::const_iterator iterator = operatorsMap.begin(); iterator != operatorsMap.end(); iterator++)
     {
         if (iterator.value().type == type)
         {
@@ -498,6 +501,9 @@ void exeptionHandler(QList<error> errors)
             break;
         case EMPTY_LEXEME:
             qDebug() << "Пустая лексема";
+            break;
+        case TO_MANY_ARGUMENTS:
+            qDebug() << "Передано слишком много аргументов";
             break;
         default:
             break;
