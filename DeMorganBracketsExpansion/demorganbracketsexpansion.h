@@ -49,7 +49,8 @@ enum exeption{
     EMPTY_TREE, //пустое древо
     NO_ACCESS_TO_FILE, // нет доступа к файлу
     VARIABLE_STARTS_WITH_DIGIT, // переменная начинается с цифры
-    EMPTY_LEXEME // пустая лексема
+    EMPTY_LEXEME, // пустая лексема
+    TO_MANY_ARGUMENTS // передано слишком много аргументов
 };
 
 /*!
@@ -172,14 +173,14 @@ QString getStringFromFile(QString path);
 void saveStringToFile(QString path, QString str);
 
 /*!
-* \brief Проверяет является ли лексема переменной
+* \brief Проверяет соответствует ли лексема правилам написания переменной
 * \param[in] lexeme - лексема
 * \return QList<error> - список ошибок написания переменной (если ошибок нет, то лексема соответствует правилу написания переменной)
 */
 QList<error> variableValidation(QString lexeme);
 
 /*!
-* \brief Проверяет является ли лексема оператором
+* \brief Классифицирует лексему
 * \param[in] lexeme - лексема
 * \return тип лексемы из перечисления lexemeType
 */
@@ -200,8 +201,8 @@ void exeptionHandler(QList<error> errors);
 
 /*!
 * \brief Копирует узел
-* \param[in] root - указатель на корень дерева
-* \param[out] copy - указатель на копию узла
+* \param[in] root - указатель на узел который необходимо скопировать
+* \param[in,out] copy - указатель на то, куда необходимо скопировать
 */
 void copyNode(node *root, node *copy);
 
@@ -218,8 +219,7 @@ void insertBetween(node *parent, int childId, node *nodeToInsert, int n);
 * \brief Возвращает список подряд идущих узлов определенного типа, каждый узел в ряду должен иметь только одного ребенка
 * \param[in] root - указатель на корень дерева
 * \param[in] type - тип узла
-* \param[in] postChild - указатель на узел, идущий после искомых узлов
-* \return QList<node*> - список узлов
+* \return QList<node*> - список подряд идущих узлов одинакового типа
 */ 
 QList<node*> nodeInARow(node *root, int type);
 
