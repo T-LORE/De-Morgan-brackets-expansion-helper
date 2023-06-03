@@ -1,3 +1,8 @@
+/*!
+*\file
+*\brief В данном файле находятся заголовки функций, которые используются для работы программы.
+*/
+
 #ifndef DEMORGANBRACKETSEXPANSION_H
 #define DEMORGANBRACKETSEXPANSION_H
 
@@ -10,15 +15,17 @@
 /*!
 * \brief Перечисление логических операндов
 */
+
+
 enum operandType {
-    NULL_ELEMENT,
-    NOT,
-    AND,
-    OR,
-    XOR,
-    NAND,
-    NOR,
-    VARIABLE
+    NULL_ELEMENT, ///< Пустой элемент
+    NOT,          ///< Отрицание
+    AND,          ///< И
+    OR,           ///< Или
+    XOR,          ///< Исключающее или
+    NAND,         ///< И-не
+    NOR,          ///< Или-не
+    VARIABLE      ///< Переменная
   
 };
 
@@ -37,20 +44,20 @@ struct node {
 * \brief Перечисление исключений
 */
 enum exeption{
-    NULL_EXEPTION, // нет ошибки
-    PATH_NOT_FOUND, // путь к файлу пустой
-    FILE_NOT_FOUND, // файл по пути не найден
-    FILE_NOT_OPENED, // нет доступа к файлу
-    MORE_THAN_ONE_STRING, // в файле содержится слишком много строк
-    UNKNOWN_SYMBOL, // неизвестный символ в названии переменной
-    NOT_ENOUGH_OPERATORS, // недостаточно оператором
-    NOT_ENOUGH_ARGUMENTS, // недостаточно аргументов
-    TO_MANY_SPACES, // слишком много пробелов
-    EMPTY_TREE, //пустое древо
-    NO_ACCESS_TO_FILE, // нет доступа к файлу
+    NULL_EXEPTION, ///< нет ошибки
+    PATH_NOT_FOUND, ///< путь к файлу пустой
+    FILE_NOT_FOUND, ///< файл по пути не найден
+    FILE_NOT_OPENED, ///< нет доступа к файлу
+    MORE_THAN_ONE_STRING, ///< в файле содержится слишком много строк
+    UNKNOWN_SYMBOL, ///< неизвестный символ в названии переменной
+    NOT_ENOUGH_OPERATORS, ///< недостаточно оператором
+    NOT_ENOUGH_ARGUMENTS, ///< недостаточно аргументов
+    TO_MANY_SPACES, ///< слишком много пробелов
+    EMPTY_TREE, ///< пустое древо
+    NO_ACCESS_TO_FILE, ///< нет доступа к файлу
     VARIABLE_STARTS_WITH_DIGIT, // переменная начинается с цифры
-    EMPTY_LEXEME, // пустая лексема
-    TO_MANY_ARGUMENTS // передано слишком много аргументов
+    EMPTY_LEXEME, ///< пустая лексема
+    TO_MANY_ARGUMENTS ///< передано слишком много аргументов
 };
 
 /*!
@@ -58,10 +65,10 @@ enum exeption{
 */
 enum lexemeType
 {
-    EMPTY,
-    OPERATOR,
-    VAR,
-    UNKNOWN_LEXEME
+    EMPTY, ///< пустая лексема
+    OPERATOR,   ///< оператор
+    VAR,    ///< переменная
+    UNKNOWN_LEXEME ///< неизвестная лексема
 };
 
 /*!
@@ -99,8 +106,8 @@ struct error {
 */
 struct stackElement
 {
-    node *element;
-    int position;
+    node *element; ///< указатель на узел дерева
+    int position; ///< позиция элемента в строке
 };
 
 /*!
@@ -108,8 +115,8 @@ struct stackElement
  */
 struct operators
 {
-    operandType type;
-    int amountOfOperands;
+    operandType type; ///< тип оператора
+    int amountOfOperands; ///< количество операндов
 };
 
 /*!
@@ -128,7 +135,7 @@ const QMap<QString, operators> operatorsMap = {
 * \brief Преобразует строку с логическим выражением без скобок записанным в обратной польской записи в логическое дерево
 * \param[in] expression - строка с логическим выражением
 * \return - указатель на корень созданного дерева
-* \throw - (Выбрасывает исключения в случае ошибок обработки строки)
+* \throw - QList<error> - Выбрасывает лист исключений в случае ошибок обработки файла
 */
 node * createLogicalTree(QString expression);
 
@@ -159,7 +166,7 @@ void treeToString(node *root, QString &str);
 * \brief  Получает логическое выражение из файла
 * \param[in] path - путь к файлу
 * \return - строка с логическим выражением
-* \throw - (Выбрасывает исключения в случае ошибок обработки файла)
+* \throw - QList<error> - Выбрасывает лист исключений в случае ошибок обработки файла
 */
 QString getStringFromFile(QString path);
 
@@ -168,7 +175,7 @@ QString getStringFromFile(QString path);
 * \brief  Записывает логическое выражение в файл
 * \param[in] path - путь к файлу
 * \param[in] str - строка с логическим выражением
-* \throw - (Выбрасывает исключения в случае ошибок обработки файла)
+* \throw - QList<error> - Выбрасывает лист исключений в случае ошибок обработки файла
 */
 void saveStringToFile(QString path, QString str);
 

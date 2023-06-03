@@ -1,3 +1,7 @@
+/*!
+*\file
+*\brief В данном файле находится реализация функций из demorganbracketsexpansion.h
+*/
 #include "demorganbracketsexpansion.h"
 #include <iostream>
 #include <QFile>
