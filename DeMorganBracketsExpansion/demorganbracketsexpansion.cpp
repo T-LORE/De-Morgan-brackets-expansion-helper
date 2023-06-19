@@ -183,11 +183,15 @@ void deMorganTransform(node *root)
 QList<node *> nodeInARow(node *root, int type)
 {
     QList<node *> stackOfNodesInARow;
-    node *currentNode = root;
-    while (currentNode->type == type)
+    QList<node *>::const_iterator iteratorCurrentNode = root->childrens.constBegin();
+    if (root->type == type)
     {
-        stackOfNodesInARow.append(currentNode);
-        currentNode = currentNode->childrens.first();
+        stackOfNodesInARow.append(root);
+    }
+    while ((*iteratorCurrentNode)->type == type)
+    {
+        stackOfNodesInARow.append(*iteratorCurrentNode);
+        iteratorCurrentNode = (*iteratorCurrentNode)->childrens.constBegin();
     }
     return stackOfNodesInARow;
 }
