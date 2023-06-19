@@ -125,12 +125,12 @@ void deMorganTransform(node *root)
 {
     if (root->type == NOT || root->type == NAND || root->type == NOR)
     {
-        // Считаем количество отрицаний подряд
-        int negationsInARow = nodeInARow(root, NOT).size();
-
         // следующий узел не являющийся отрицанием
         QList<node *> negationsRow = nodeInARow(root, NOT);
         node *child = negationsRow.isEmpty() ? root : negationsRow.last()->childrens.first();
+
+        // Считаем количество отрицаний подряд
+        int negationsInARow = negationsRow.size();
 
         // Учитываем отрицания в NAND и NOR
         negationsInARow += child->type == NAND || child->type == NOR ? 1 : 0;
